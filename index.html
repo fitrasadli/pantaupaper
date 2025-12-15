@@ -51,7 +51,7 @@
                 </div>
                 
                 <button type="submit" 
-                    class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 rounded-lg transition duration-300 shadow-md">
+                    class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 rounded-lg transition duration-300 shadow-md disabled:opacity-50">
                     Masuk
                 </button>
             </form>
@@ -147,10 +147,6 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <script>
-        // --- KONFIGURASI LOGIN (HARDCODED) ---
-        const VALID_USER = "fitrah";
-        const VALID_PASS = "123456";
-
         // --- KONFIGURASI SUPABASE ---
         const SUPABASE_URL = 'https://lkldrnughtjtwlbnzrup.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_P3m8csALCDa3-tJvoLhIBQ_AD_UkmDV';
@@ -200,20 +196,57 @@
             fetchPapers();
         }
 
-        loginForm.addEventListener('submit', (e) => {
+        // Event Listener Login yang Diperbarui (Menggunakan Database)
+        loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const user = document.getElementById('username').value;
             const pass = document.getElementById('password').value;
+            const submitBtn = loginForm.querySelector('button[type="submit"]');
 
-            if (user === VALID_USER && pass === VALID_PASS) {
-                // Login Sukses
-                sessionStorage.setItem('isLoggedIn', 'true');
-                loginError.classList.add('hidden');
-                showApp();
-            } else {
-                // Login Gagal
-                loginError.textContent = "Username atau Password salah!";
+            // Feedback visual loading
+            const originalText = submitBtn.innerText;
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Memeriksa...";
+            loginError.classList.add('hidden');
+
+            try {
+                // Query ke tabel 'users' di Supabase
+                // PENTING: Tabel 'users' harus sudah dibuat di Supabase
+                const { data, error } = await supabaseClient
+                    .from('users')
+                    .select('*')
+                    .eq('username', user)
+                    .eq('password', pass)
+                    .maybeSingle(); // Mengambil satu baris atau null
+
+                if (error) {
+                    throw error;
+                }
+
+                if (data) {
+                    // Login Sukses
+                    sessionStorage.setItem('isLoggedIn', 'true');
+                    showApp();
+                } else {
+                    // Login Gagal (User tidak ditemukan atau password salah)
+                    throw new Error("Username atau Password salah!");
+                }
+            } catch (err) {
+                console.error("Login error:", err);
+                // Menangani pesan error
+                let errorMessage = "Terjadi kesalahan saat login.";
+                if (err.message) {
+                   if (err.message.includes('relation "users" does not exist')) {
+                        errorMessage = "Error: Tabel 'users' belum dibuat di database.";
+                   } else {
+                        errorMessage = err.message;
+                   }
+                }
+                loginError.textContent = errorMessage;
                 loginError.classList.remove('hidden');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerText = originalText;
             }
         });
 
