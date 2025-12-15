@@ -28,81 +28,117 @@
         }
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body class="bg-gray-100 min-h-screen flex flex-col">
 
-    <div class="container mx-auto">
-        <h1 class="text-3xl md:text-4xl font-extrabold text-gray-800 mb-8 border-b-4 border-yellow-600 pb-2">
-            Sistem Manajemen Paper
-        </h1>
-
-        <!-- Form Tambah Paper -->
-        <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg mb-8">
-            <h2 class="text-2xl font-semibold text-yellow-700 mb-4">Tambah Paper Baru</h2>
-            <form id="paperForm" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <input type="text" id="title" placeholder="Judul Paper (Wajib)" required
-                       class="col-span-1 md:col-span-2 p-3 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
-                <input type="text" id="authors" placeholder="Nama Penulis (Pisahkan dengan koma)"
-                       class="p-3 border border-gray-300 rounded-lg">
-                <select id="status" required
-                        class="p-3 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
-                    <option value="" disabled selected>Pilih Status</option>
-                    <option value="Draft">Draft</option>
-                    <option value="Submitted">Submitted</option>
-                    <option value="Under Review">Under Review</option>
-                    <option value="Accepted">Accepted</option>
-                    <option value="Rejected">Rejected</option>
-                </select>
-                <input type="text" id="category" placeholder="Kategori (Jurnal/Konferensi/Lainnya)"
-                       class="p-3 border border-gray-300 rounded-lg">
-                <input type="date" id="deadline" placeholder="Deadline"
-                       class="p-3 border border-gray-300 rounded-lg">
-                <input type="url" id="reference_link" placeholder="Link Referensi (URL)"
-                       class="p-3 border border-gray-300 rounded-lg">
-                <input type="url" id="overleaf_link" placeholder="Link Overleaf (URL)"
-                       class="p-3 border border-gray-300 rounded-lg">
-                <input type="url" id="ppt_link" placeholder="Link PPT/Slide (URL)"
-                       class="p-3 border border-gray-300 rounded-lg">
-                
-                <button type="submit" id="submitButton"
-                        class="col-span-1 md:col-span-3 bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-3 px-6 rounded-lg transition duration-300 shadow-md hover:shadow-lg disabled:opacity-50">
-                    Tambah Paper
-                </button>
-                <p id="formMessage" class="col-span-3 text-sm text-center hidden"></p>
-            </form>
-        </div>
-
-        <!-- Bagian Pencarian dan Daftar Paper -->
-        <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
-            <h2 class="text-2xl font-semibold text-yellow-700 mb-4">Daftar Paper</h2>
-            
-            <!-- Input Pencarian -->
-            <input type="text" id="search" placeholder="Cari berdasarkan Judul atau Penulis..."
-                   class="w-full p-3 mb-6 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
-
-            <!-- Tabel Paper -->
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Judul</th>
-                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Penulis</th>
-                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Kategori</th>
-                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Deadline</th>
-                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tautan</th>
-                        </tr>
-                    </thead>
-                    <tbody id="papersList" class="bg-white divide-y divide-gray-200">
-                        <!-- Data paper akan dimasukkan di sini oleh JavaScript -->
-                        <tr id="loadingRow">
-                            <td colspan="6" class="p-4 text-center text-gray-500">Memuat data...</td>
-                        </tr>
-                    </tbody>
-                </table>
+    <!-- BAGIAN 1: LOGIN SECTION -->
+    <div id="loginSection" class="flex-grow flex items-center justify-center p-4">
+        <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md border-t-4 border-yellow-500">
+            <div class="text-center mb-6">
+                <h1 class="text-3xl font-bold text-gray-800">Login Area</h1>
+                <p class="text-gray-500 text-sm mt-2">Silakan masuk untuk mengelola paper.</p>
             </div>
-             <p id="noDataMessage" class="hidden p-4 text-center text-gray-500 mt-4">Tidak ada paper yang ditemukan.</p>
+            
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="username">Username</label>
+                    <input type="text" id="username" placeholder="Masukkan username" required
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                </div>
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="password">Password</label>
+                    <input type="password" id="password" placeholder="Masukkan password" required
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                </div>
+                
+                <button type="submit" 
+                    class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 rounded-lg transition duration-300 shadow-md">
+                    Masuk
+                </button>
+            </form>
+            <p id="loginError" class="text-red-500 text-center mt-4 text-sm hidden"></p>
         </div>
+    </div>
 
+    <!-- BAGIAN 2: APLIKASI UTAMA (Disembunyikan Default) -->
+    <div id="appSection" class="hidden p-4 md:p-8">
+        <div class="container mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-8 border-b-4 border-yellow-600 pb-2">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-800">
+                    Sistem Manajemen Paper
+                </h1>
+                <button id="logoutButton" class="mt-4 md:mt-0 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition shadow">
+                    Logout
+                </button>
+            </div>
+
+            <!-- Form Tambah Paper -->
+            <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg mb-8">
+                <h2 class="text-2xl font-semibold text-yellow-700 mb-4">Tambah Paper Baru</h2>
+                <form id="paperForm" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <input type="text" id="title" placeholder="Judul Paper (Wajib)" required
+                           class="col-span-1 md:col-span-2 p-3 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
+                    <input type="text" id="authors" placeholder="Nama Penulis (Pisahkan dengan koma)"
+                           class="p-3 border border-gray-300 rounded-lg">
+                    <select id="status" required
+                            class="p-3 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
+                        <option value="" disabled selected>Pilih Status</option>
+                        <option value="Draft">Draft</option>
+                        <option value="Submitted">Submitted</option>
+                        <option value="Under Review">Under Review</option>
+                        <option value="Accepted">Accepted</option>
+                        <option value="Rejected">Rejected</option>
+                    </select>
+                    <input type="text" id="category" placeholder="Kategori (Jurnal/Konferensi/Lainnya)"
+                           class="p-3 border border-gray-300 rounded-lg">
+                    <input type="date" id="deadline" placeholder="Deadline"
+                           class="p-3 border border-gray-300 rounded-lg">
+                    <input type="url" id="reference_link" placeholder="Link Referensi (URL)"
+                           class="p-3 border border-gray-300 rounded-lg">
+                    <input type="url" id="overleaf_link" placeholder="Link Overleaf (URL)"
+                           class="p-3 border border-gray-300 rounded-lg">
+                    <input type="url" id="ppt_link" placeholder="Link PPT/Slide (URL)"
+                           class="p-3 border border-gray-300 rounded-lg">
+                    
+                    <button type="submit" id="submitButton"
+                            class="col-span-1 md:col-span-3 bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-3 px-6 rounded-lg transition duration-300 shadow-md hover:shadow-lg disabled:opacity-50">
+                        Tambah Paper
+                    </button>
+                    <p id="formMessage" class="col-span-3 text-sm text-center hidden"></p>
+                </form>
+            </div>
+
+            <!-- Bagian Pencarian dan Daftar Paper -->
+            <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
+                <h2 class="text-2xl font-semibold text-yellow-700 mb-4">Daftar Paper</h2>
+                
+                <!-- Input Pencarian -->
+                <input type="text" id="search" placeholder="Cari berdasarkan Judul atau Penulis..."
+                       class="w-full p-3 mb-6 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
+
+                <!-- Tabel Paper -->
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Judul</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Penulis</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Kategori</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Deadline</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tautan</th>
+                            </tr>
+                        </thead>
+                        <tbody id="papersList" class="bg-white divide-y divide-gray-200">
+                            <!-- Data paper akan dimasukkan di sini oleh JavaScript -->
+                            <tr id="loadingRow">
+                                <td colspan="6" class="p-4 text-center text-gray-500">Memuat data...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                 <p id="noDataMessage" class="hidden p-4 text-center text-gray-500 mt-4">Tidak ada paper yang ditemukan.</p>
+            </div>
+        </div>
     </div>
 
     <!-- Supabase Library -->
@@ -111,16 +147,26 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <script>
-        // --- KONFIGURASI SUPABASE (Gunakan data dari input pengguna) ---
+        // --- KONFIGURASI LOGIN (HARDCODED) ---
+        const VALID_USER = "fitrah";
+        const VALID_PASS = "123456";
+
+        // --- KONFIGURASI SUPABASE ---
         const SUPABASE_URL = 'https://lkldrnughtjtwlbnzrup.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_P3m8csALCDa3-tJvoLhIBQ_AD_UkmDV';
         const TABLE_NAME = 'papers';
 
-        // Perbaikan: Mengganti nama variabel klien Supabase menjadi 'supabaseClient'
-        // untuk menghindari bentrok dengan objek global 'supabase' dari CDN saat inisialisasi.
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // --- REFERENSI DOM ---
+        // Login Elements
+        const loginSection = document.getElementById('loginSection');
+        const appSection = document.getElementById('appSection');
+        const loginForm = document.getElementById('loginForm');
+        const loginError = document.getElementById('loginError');
+        const logoutButton = document.getElementById('logoutButton');
+
+        // App Elements
         const papersList = document.getElementById('papersList');
         const paperForm = document.getElementById('paperForm');
         const searchInput = document.getElementById('search');
@@ -129,42 +175,68 @@
         const formMessage = document.getElementById('formMessage');
         const submitButton = document.getElementById('submitButton');
 
-        // --- FUNGSI UTAMA ---
+        // --- LOGIKA LOGIN ---
 
-        /**
-         * Mengubah status menjadi badge Tailwind CSS
-         * @param {string} status
-         * @returns {string} HTML untuk badge
-         */
+        // Cek sesi saat halaman dimuat
+        function checkSession() {
+            const isLoggedIn = sessionStorage.getItem('isLoggedIn');
+            if (isLoggedIn === 'true') {
+                showApp();
+            } else {
+                showLogin();
+            }
+        }
+
+        function showLogin() {
+            loginSection.classList.remove('hidden');
+            appSection.classList.add('hidden');
+            document.body.classList.remove('bg-gray-50'); // Optional styling reset
+        }
+
+        function showApp() {
+            loginSection.classList.add('hidden');
+            appSection.classList.remove('hidden');
+            // Muat data paper HANYA jika sudah login
+            fetchPapers();
+        }
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+
+            if (user === VALID_USER && pass === VALID_PASS) {
+                // Login Sukses
+                sessionStorage.setItem('isLoggedIn', 'true');
+                loginError.classList.add('hidden');
+                showApp();
+            } else {
+                // Login Gagal
+                loginError.textContent = "Username atau Password salah!";
+                loginError.classList.remove('hidden');
+            }
+        });
+
+        logoutButton.addEventListener('click', () => {
+            sessionStorage.removeItem('isLoggedIn');
+            window.location.reload(); // Reload halaman untuk reset state
+        });
+
+        // --- LOGIKA APLIKASI (PAPER) ---
+
         function getStatusBadge(status) {
             let color = '';
             switch (status) {
-                case 'Draft':
-                    color = 'bg-yellow-100 text-yellow-800';
-                    break;
-                case 'Submitted':
-                    color = 'bg-blue-100 text-blue-800';
-                    break;
-                case 'Under Review':
-                    color = 'bg-purple-100 text-purple-800';
-                    break;
-                case 'Accepted':
-                    color = 'bg-green-100 text-green-800';
-                    break;
-                case 'Rejected':
-                    color = 'bg-red-100 text-red-800';
-                    break;
-                default:
-                    color = 'bg-gray-100 text-gray-800';
+                case 'Draft': color = 'bg-yellow-100 text-yellow-800'; break;
+                case 'Submitted': color = 'bg-blue-100 text-blue-800'; break;
+                case 'Under Review': color = 'bg-purple-100 text-purple-800'; break;
+                case 'Accepted': color = 'bg-green-100 text-green-800'; break;
+                case 'Rejected': color = 'bg-red-100 text-red-800'; break;
+                default: color = 'bg-gray-100 text-gray-800';
             }
             return `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${color}">${status}</span>`;
         }
 
-        /**
-         * Membuat baris tabel untuk satu paper
-         * @param {object} paper
-         * @returns {string} HTML untuk baris tabel
-         */
         function createPaperRow(paper) {
             const deadlineDate = paper.deadline ? new Date(paper.deadline).toLocaleDateString('id-ID') : '-';
 
@@ -199,40 +271,30 @@
             `;
         }
         
-        /**
-         * Mengambil data paper dari Supabase
-         * @param {string} searchTerm - Kata kunci pencarian
-         */
         async function fetchPapers(searchTerm = '') {
             loadingRow.classList.remove('hidden');
             papersList.innerHTML = '';
             noDataMessage.classList.add('hidden');
 
             try {
-                // Menggunakan supabaseClient yang sudah diperbaiki
                 let query = supabaseClient.from(TABLE_NAME)
                     .select('*')
                     .order('created_at', { ascending: false });
 
-                // Terapkan filter pencarian jika ada
                 if (searchTerm) {
                     const searchPattern = `%${searchTerm.toLowerCase()}%`;
-                    // Cari di kolom title ATAU authors
                     query = query.or(`title.ilike.${searchPattern},authors.ilike.${searchPattern}`);
                 }
 
                 const { data, error } = await query;
 
-                if (error) {
-                    throw error;
-                }
+                if (error) throw error;
 
-                papersList.innerHTML = ''; // Kosongkan daftar
+                papersList.innerHTML = '';
                 if (data && data.length > 0) {
                     data.forEach(paper => {
                         papersList.insertAdjacentHTML('beforeend', createPaperRow(paper));
                     });
-                     // Setelah data dimasukkan, proses ikon Lucide
                     lucide.createIcons();
                 } else {
                     noDataMessage.classList.remove('hidden');
@@ -246,9 +308,6 @@
             }
         }
 
-        /**
-         * Menambahkan paper baru ke Supabase
-         */
         async function addPaper(event) {
             event.preventDefault();
 
@@ -272,17 +331,12 @@
             submitButton.textContent = 'Menyimpan...';
 
             try {
-                // Menggunakan supabaseClient yang sudah diperbaiki
                 const { error } = await supabaseClient.from(TABLE_NAME).insert([newPaper]);
 
-                if (error) {
-                    throw error;
-                }
+                if (error) throw error;
 
-                // Sukses
                 paperForm.reset();
                 showMessage('Paper berhasil ditambahkan!', 'text-green-500');
-                // Data akan otomatis diupdate karena kita menggunakan onSnapshot (atau dipanggil ulang)
                 fetchPapers(searchInput.value);
 
             } catch (error) {
@@ -294,11 +348,6 @@
             }
         }
 
-        /**
-         * Menampilkan pesan sementara di bawah form
-         * @param {string} message 
-         * @param {string} colorClass 
-         */
         function showMessage(message, colorClass) {
             formMessage.textContent = message;
             formMessage.className = `col-span-3 text-sm text-center ${colorClass}`;
@@ -312,26 +361,20 @@
 
         paperForm.addEventListener('submit', addPaper);
 
-        // Debounce untuk fungsi pencarian agar tidak memanggil API terlalu sering
         let searchTimeout;
         searchInput.addEventListener('input', () => {
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(() => {
                 fetchPapers(searchInput.value);
-            }, 300); // Tunggu 300ms setelah user berhenti mengetik
+            }, 300);
         });
 
         // --- INISIALISASI ---
 
         document.addEventListener('DOMContentLoaded', () => {
-            // Muat data awal saat halaman dimuat
-            fetchPapers();
+            // Ganti pemanggilan langsung fetchPapers dengan pengecekan sesi login
+            checkSession();
         });
-
-        // Catatan: Untuk aplikasi real-time yang lebih baik,
-        // gunakan `supabase.channel('public:papers').on('postgres_changes', ...).subscribe()`
-        // namun, untuk kesederhanaan file tunggal, kita menggunakan pemanggilan ulang `fetchPapers()`
-        // setelah penambahan data.
 
     </script>
 </body>
