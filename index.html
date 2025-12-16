@@ -3,19 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manajemen Paper Akademik</title>
+    <title>Manajemen Paper & Materi Akademik</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        /* Custom Styles dari kode yang Anda berikan */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        
         body {
             font-family: 'Inter', sans-serif;
-            /* Default background for app section - PUTIH */
-            background-color: #ffffff;
+            background-color: #f7f9fb;
         }
+        
         .container {
-            max-width: 1280px;
+            max-width: 1400px;
         }
+
+        /* --- Gaya Navigasi (Diambil dari input user) --- */
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            background-color: #F0E68C; /* Khaki (Kuning Muda) */
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            /* Tambahan untuk menyesuaikan lebar di dalam aside p-6 */
+            margin-left: -1rem;
+            margin-right: -1rem;
+            width: calc(100% + 2rem);
+        }
+
+        .nav-item-inactive:hover {
+            background-color: #FFEB3B; /* Kuning lebih cerah saat hover */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .nav-text {
+            font-weight: bold;
+            color: #4B5563; /* Teks abu-abu */
+            font-size: 1rem;
+            margin-left: 0.75rem; /* Jarak antara ikon dan teks */
+        }
+
+        .nav-item-inactive:hover .nav-text {
+            color: #2C3E50; /* Teks lebih gelap saat hover */
+        }
+
+        .nav-item-active {
+            background-color: #FFD700; /* Gold (Kuning Emas) */
+            color: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            font-weight: bold;
+        }
+
+        .nav-item-active .nav-text {
+            font-weight: bold;
+            color: white; /* Teks putih di item aktif */
+        }
+        /* Mengatur warna ikon di item aktif */
+        .nav-item-active i {
+            color: white; 
+        }
+        /* Mengatur warna ikon di item non-aktif */
+        .nav-item-inactive i {
+            color: #D6A238; /* Kuning Emas agak gelap untuk ikon non-aktif */
+            transition: color 0.3s;
+        }
+        .nav-item-inactive:hover i {
+            color: #B8860B; /* Warna ikon lebih kuat saat hover */
+        }
+
+        /* Additional styling */
+        #mainNav {
+            margin-top: 20px;
+            /* Mengganti space-y-2 menjadi gap-2 pada nav element */
+        }
+        
+        /* --- Gaya Asli Aplikasi yang Dipertahankan/Disesuaikan --- */
         /* Custom scrollbar for better look */
         ::-webkit-scrollbar {
             width: 8px;
@@ -29,47 +95,38 @@
         }
         /* Style for the visual side - SANGAT LEMBUT/PUTIH */
         #visual-side {
-            background: linear-gradient(135deg, #fffcf5, #ffffff); /* Soft Yellowish White ke Pure White */
-            color: #4b5563; /* Warna teks dipertahankan */
+            background: linear-gradient(135deg, #fffcf5, #ffffff);
+            color: #4b5563;
         }
-        /* Keyframe for loading animation */
         @keyframes spin {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
         .animate-spin-fast {
-          animation: spin 0.5s linear infinite;
+            animation: spin 0.5s linear infinite;
         }
-
-        /* Gaya untuk Modal (Jendela Pop-up) */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        .modal-content {
-            background-color: white;
-            padding: 2rem;
-            border-radius: 1rem;
-            max-width: 90%;
-            width: 500px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            position: relative;
-        }
-
-        /* CSS BARU UNTUK TRANSISI HALUS */
         .sortable-header {
             transition: background-color 0.2s ease-in-out;
         }
         .sort-icon-wrapper i {
             transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+        }
+        .main-page-header {
+            /* Kontainer utama untuk judul */
+            @apply bg-white p-5 rounded-xl shadow-lg border-l-8 border-yellow-500 mb-4;
+        }
+        .view-background-texture {
+            background-color: #fefefe;
+            background-image: repeating-linear-gradient(
+                45deg, 
+                #fcfcfc, 
+                #fcfcfc 15px, 
+                #f9f9f9 15px, 
+                #f9f9f9 30px
+            );
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.03);
         }
     </style>
 </head>
@@ -129,165 +186,267 @@
         </div>
     </div>
 
-    <!-- BAGIAN 2: APLIKASI UTAMA (Diperbarui) -->
-    <div id="appSection" class="hidden p-4 md:p-8"> <!-- Mewarisi background putih dari body -->
-        <div class="container mx-auto">
-            <div class="flex flex-col md:flex-row justify-between items-center mb-8 border-b-4 border-yellow-600 pb-2">
-                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-800 flex items-center space-x-2">
-                    <!-- Logo di Header Aplikasi Utama -->
-                    <img id="headerLogo" 
-                        class="w-8 h-8 mr-2 object-contain rounded-md" 
-                        src="" 
-                        alt="Logo"
-                        onerror="this.onerror=null; this.src='https://placehold.co/32x32/fde047/78350f?text=H';">
-                    <span class="text-yellow-600">Sistem Manajemen Paper</span>
-                </h1>
-                <button id="logoutButton" class="mt-4 md:mt-0 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition shadow flex items-center space-x-1">
-                    <i data-lucide="log-out" class="w-4 h-4"></i>
-                    <span>Logout</span>
-                </button>
-            </div>
+    <!-- BAGIAN 2: APLIKASI UTAMA (Diperbarui dengan Sidebar) -->
+    <div id="appSection" class="hidden flex-grow flex p-4 md:p-8">
+        <div class="container mx-auto flex flex-col lg:flex-row space-y-6 lg:space-y-0 lg:space-x-8">
 
-            <!-- Form Tambah Paper -->
-            <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg mb-8 border-t-4 border-yellow-500">
-                <h2 class="text-2xl font-semibold text-yellow-700 mb-4 flex items-center space-x-2">
-                    <i data-lucide="book-plus" class="w-6 h-6"></i>
-                    <span>Tambah Paper Baru</span>
-                </h2>
-                <form id="paperForm" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <input type="text" id="title" placeholder="Judul Paper (Wajib)" required
-                               class="col-span-1 md:col-span-2 p-3 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
-                    <input type="text" id="authors" placeholder="Nama Penulis (Pisahkan dengan koma)"
-                               class="p-3 border border-gray-300 rounded-lg">
-                    <select id="status" required
-                                 class="p-3 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
-                        <option value="" disabled selected>Pilih Status</option>
-                        <option value="Draft">Draft</option>
-                        <option value="Submitted">Submitted</option>
-                        <option value="Under Review">Under Review</option>
-                        <option value="Accepted">Accepted</option>
-                        <option value="Rejected">Rejected</option>
-                    </select>
-                    <input type="text" id="category" placeholder="Kategori (Jurnal/Konferensi/Lainnya)"
-                               class="p-3 border border-gray-300 rounded-lg">
-                    <input type="date" id="deadline" placeholder="Deadline"
-                               class="p-3 border border-gray-300 rounded-lg">
-                    <input type="url" id="reference_link" placeholder="Link Referensi (URL)"
-                               class="p-3 border border-gray-300 rounded-lg">
-                    <input type="url" id="overleaf_link" placeholder="Link Overleaf (URL)"
-                               class="p-3 border border-gray-300 rounded-lg">
-                    <input type="url" id="ppt_link" placeholder="Link PPT/Slide (URL)"
-                               class="p-3 border border-gray-300 rounded-lg">
-                    
-                    <!-- TOMBOL SUBMIT DENGAN VISUAL YANG DIPERBARUI -->
-                    <button type="submit" id="submitButton"
-                                class="col-span-1 md:col-span-3 bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 px-6 rounded-xl transition duration-300 shadow-xl shadow-yellow-400/50 hover:shadow-2xl hover:shadow-yellow-500/70 disabled:opacity-50 flex items-center justify-center space-x-2">
-                        <!-- Konten diisi oleh JS -->
+            <!-- SIDEBAR NAVIGASI -->
+            <aside class="w-full lg:w-64 bg-white p-6 rounded-xl shadow-lg flex-shrink-0">
+                <div class="flex flex-col mb-8 border-b pb-4">
+                    <div class="flex items-center text-xl font-bold text-gray-800 mb-4">
+                        <img id="headerLogo" 
+                            class="w-8 h-8 mr-2 object-contain rounded-md" 
+                            src="" 
+                            alt="Logo"
+                            onerror="this.onerror=null; this.src='https://placehold.co/32x32/fde047/78350f?text=H';">
+                        <span class="text-yellow-600">Hexa RnD</span>
+                    </div>
+                    <button id="logoutButton" class="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg text-sm font-semibold transition shadow flex items-center justify-center space-x-1">
+                        <i data-lucide="log-out" class="w-4 h-4"></i>
+                        <span>Logout</span>
                     </button>
-                    <p id="formMessage" class="col-span-3 text-sm text-center hidden"></p>
-                </form>
-            </div>
+                </div>
 
-            <!-- Bagian Pencarian dan Daftar Paper -->
-            <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
-                <h2 class="text-2xl font-semibold text-yellow-700 mb-4 flex items-center space-x-2">
-                    <i data-lucide="list-checks" class="w-6 h-6"></i>
-                    <span>Daftar Paper</span>
-                </h2>
-                
-                <!-- Input Pencarian -->
-                <input type="text" id="search" placeholder="Cari berdasarkan Judul atau Penulis..."
-                               class="w-full p-3 mb-6 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
+                <nav id="mainNav" class="space-y-2">
+                    <!-- Menu Buttons (Menggunakan struktur baru yang Anda berikan) -->
+                    <div id="nav-paper" class="nav-item nav-item-active" data-view="paper">
+                        <i data-lucide="file-text" class="w-5 h-5 mr-3"></i>
+                        <span class="nav-text">Manajemen Paper</span>
+                    </div>
+                    <div id="nav-materi" class="nav-item nav-item-inactive" data-view="materi">
+                        <i data-lucide="folder-tree" class="w-5 h-5 mr-3"></i>
+                        <span class="nav-text">Manajemen Materi</span>
+                    </div>
+                </nav>
+            </aside>
+            
+            <!-- KONTEN UTAMA -->
+            <main id="mainContent" class="flex-grow w-full">
+                <!-- VIEW 1: MANAJEMEN PAPER -->
+                <div id="paperView" class="view-content hidden space-y-4">
+                    
+                    <!-- HEADER SECTION BARU -->
+                    <div class="main-page-header">
+                        <h1 class="text-3xl font-bold text-gray-800 flex items-center p-0">
+                            <i data-lucide="file-text" class="w-8 h-8 mr-3 text-yellow-600"></i>
+                            Manajemen Paper
+                        </h1>
+                        <p class="text-sm text-gray-500 mt-1 pl-11">Kelola, tambah, dan pantau status paper riset.</p>
+                    </div>
 
-                <!-- Tabel Paper -->
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <!-- DIBUNGKUS DENGAN DIV FLEX UNTUK ALIGNMENT HORIZONTAL -->
-                                <th onclick="handleHeaderSortClick('title')" data-sort-key="title" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 sortable-header">
-                                    <div class="flex items-center space-x-1">
-                                        <span>Judul</span> <span class="sort-icon-wrapper" data-col="title"></span>
-                                    </div>
-                                </th>
-                                <th onclick="handleHeaderSortClick('authors')" data-sort-key="authors" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 sortable-header">
-                                    <div class="flex items-center space-x-1">
-                                        <span>Penulis</span> <span class="sort-icon-wrapper" data-col="authors"></span>
-                                    </div>
-                                </th>
-                                <th onclick="handleHeaderSortClick('status')" data-sort-key="status" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 sortable-header">
-                                    <div class="flex items-center space-x-1">
-                                        <span>Status</span> <span class="sort-icon-wrapper" data-col="status"></span>
-                                    </div>
-                                </th>
-                                <th onclick="handleHeaderSortClick('category')" data-sort-key="category" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell cursor-pointer hover:bg-gray-100 sortable-header">
-                                    <div class="flex items-center space-x-1">
-                                        <span>Kategori</span> <span class="sort-icon-wrapper" data-col="category"></span>
-                                    </div>
-                                </th>
-                                <th onclick="handleHeaderSortClick('deadline')" data-sort-key="deadline" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell cursor-pointer hover:bg-gray-100 sortable-header">
-                                    <div class="flex items-center space-x-1">
-                                        <span>Deadline</span> <span class="sort-icon-wrapper" data-col="deadline"></span>
-                                    </div>
-                                </th>
-                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="papersList" class="bg-white divide-y divide-gray-200">
-                            <!-- Data paper akan dimasukkan di sini oleh JavaScript -->
-                            <tr id="loadingRow">
-                                <td colspan="6" class="p-4 text-center text-gray-500">Memuat data...</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                       <p id="noDataMessage" class="hidden p-4 text-center text-gray-500 mt-4">Tidak ada paper yang ditemukan.</p>
-            </div>
+                    <div class="view-background-texture space-y-8 p-6">
+                    
+                        <!-- Form Tambah Paper -->
+                        <div class="bg-white p-6 md:p-8 rounded-xl shadow-xl border-t-4 border-yellow-500">
+                            <h2 class="text-2xl font-semibold text-yellow-700 mb-4 flex items-center space-x-2">
+                                <i data-lucide="book-plus" class="w-6 h-6"></i>
+                                <span>Tambah Paper Baru</span>
+                            </h2>
+                            <form id="paperForm" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <input type="text" id="title" placeholder="Judul Paper (Wajib)" required
+                                    class="col-span-1 md:col-span-2 p-3 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
+                                <input type="text" id="authors" placeholder="Nama Penulis (Pisahkan dengan koma)"
+                                    class="p-3 border border-gray-300 rounded-lg">
+                                <select id="status" required
+                                    class="p-3 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
+                                    <option value="" disabled selected>Pilih Status</option>
+                                    <option value="Draft">Draft</option>
+                                    <option value="Submitted">Submitted</option>
+                                    <option value="Under Review">Under Review</option>
+                                    <option value="Accepted">Accepted</option>
+                                    <option value="Rejected">Rejected</option>
+                                </select>
+                                <input type="text" id="category" placeholder="Kategori (Jurnal/Konferensi/Lainnya)"
+                                    class="p-3 border border-gray-300 rounded-lg">
+                                <input type="date" id="deadline" placeholder="Deadline"
+                                    class="p-3 border border-gray-300 rounded-lg">
+                                <input type="url" id="reference_link" placeholder="Link Referensi (URL)"
+                                    class="p-3 border border-gray-300 rounded-lg">
+                                <input type="url" id="overleaf_link" placeholder="Link Overleaf (URL)"
+                                    class="p-3 border border-gray-300 rounded-lg">
+                                <input type="url" id="ppt_link" placeholder="Link PPT/Slide (URL)"
+                                    class="p-3 border border-gray-300 rounded-lg">
+                                
+                                <button type="submit" id="submitPaperButton"
+                                    class="col-span-1 md:col-span-3 bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 px-6 rounded-xl transition duration-300 shadow-xl shadow-yellow-400/50 hover:shadow-2xl hover:shadow-yellow-500/70 disabled:opacity-50 flex items-center justify-center space-x-2">
+                                    <!-- Konten diisi oleh JS -->
+                                </button>
+                                <p id="formPaperMessage" class="col-span-3 text-sm text-center hidden"></p>
+                            </form>
+                        </div>
+
+                        <!-- Bagian Pencarian dan Daftar Paper -->
+                        <div class="bg-white p-6 md:p-8 rounded-xl shadow-xl">
+                            <h2 class="text-2xl font-semibold text-yellow-700 mb-4 flex items-center space-x-2">
+                                <i data-lucide="list-checks" class="w-6 h-6"></i>
+                                <span>Daftar Paper</span>
+                            </h2>
+                            
+                            <!-- Input Pencarian -->
+                            <input type="text" id="searchPaper" placeholder="Cari berdasarkan Judul atau Penulis..."
+                                class="w-full p-3 mb-6 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
+
+                            <!-- Tabel Paper -->
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th onclick="handleHeaderSortClick('title', 'paper')" data-sort-key="title" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 sortable-header">
+                                                <div class="flex items-center space-x-1"><span>Judul</span> <span class="sort-icon-wrapper paper" data-col="title"></span></div>
+                                            </th>
+                                            <th onclick="handleHeaderSortClick('authors', 'paper')" data-sort-key="authors" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 sortable-header">
+                                                <div class="flex items-center space-x-1"><span>Penulis</span> <span class="sort-icon-wrapper paper" data-col="authors"></span></div>
+                                            </th>
+                                            <th onclick="handleHeaderSortClick('status', 'paper')" data-sort-key="status" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 sortable-header">
+                                                <div class="flex items-center space-x-1"><span>Status</span> <span class="sort-icon-wrapper paper" data-col="status"></span></div>
+                                            </th>
+                                            <th onclick="handleHeaderSortClick('category', 'paper')" data-sort-key="category" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell cursor-pointer hover:bg-gray-100 sortable-header">
+                                                <div class="flex items-center space-x-1"><span>Kategori</span> <span class="sort-icon-wrapper paper" data-col="category"></span></div>
+                                            </th>
+                                            <th onclick="handleHeaderSortClick('deadline', 'paper')" data-sort-key="deadline" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell cursor-pointer hover:bg-gray-100 sortable-header">
+                                                <div class="flex items-center space-x-1"><span>Deadline</span> <span class="sort-icon-wrapper paper" data-col="deadline"></span></div>
+                                            </th>
+                                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="papersList" class="bg-white divide-y divide-gray-200">
+                                        <!-- Data paper akan dimasukkan di sini oleh JavaScript -->
+                                    </tbody>
+                                </table>
+                                <p id="noPaperDataMessage" class="hidden p-4 text-center text-gray-500 mt-4">Tidak ada paper yang ditemukan.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- VIEW 2: MANAJEMEN MATERI (BARU) -->
+                <div id="materiView" class="view-content hidden space-y-4">
+                    
+                    <!-- HEADER SECTION BARU -->
+                    <div class="main-page-header">
+                        <h1 class="text-3xl font-bold text-gray-800 flex items-center p-0">
+                            <i data-lucide="folder-tree" class="w-8 h-8 mr-3 text-yellow-600"></i>
+                            Manajemen Materi
+                        </h1>
+                        <p class="text-sm text-gray-500 mt-1 pl-11">Arsip dan kelola materi presentasi atau *sharing knowledge*.</p>
+                    </div>
+
+                    <div class="view-background-texture space-y-8 p-6">
+                        
+                        <!-- Form Tambah Materi -->
+                        <div class="bg-white p-6 md:p-8 rounded-xl shadow-xl border-t-4 border-yellow-500">
+                            <h2 class="text-2xl font-semibold text-yellow-700 mb-4 flex items-center space-x-2">
+                                <i data-lucide="folder-plus" class="w-6 h-6"></i>
+                                <span>Tambah Materi Baru</span>
+                            </h2>
+                            <form id="materiForm" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <select id="divisi" required
+                                    class="p-3 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
+                                    <option value="" disabled selected>Pilih Divisi (Wajib)</option>
+                                    <option value="5G">5G</option>
+                                    <option value="IoT">IoT</option>
+                                    <option value="Umum">Umum</option>
+                                </select>
+                                <input type="text" id="judul_materi" placeholder="Judul Materi (Wajib)" required
+                                    class="col-span-1 md:col-span-2 p-3 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
+                                <input type="text" id="pembuat" placeholder="Nama Pembuat"
+                                    class="p-3 border border-gray-300 rounded-lg">
+                                <input type="date" id="tanggal_jadi" placeholder="Tanggal Jadi"
+                                    class="p-3 border border-gray-300 rounded-lg">
+                                <input type="url" id="link_materi" placeholder="Link Materi (URL Wajib)" required
+                                    class="col-span-1 md:col-span-2 p-3 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
+                                
+                                <button type="submit" id="submitMateriButton"
+                                    class="col-span-1 md:col-span-3 bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 px-6 rounded-xl transition duration-300 shadow-xl shadow-yellow-400/50 hover:shadow-2xl hover:shadow-yellow-500/70 disabled:opacity-50 flex items-center justify-center space-x-2">
+                                    <!-- Konten diisi oleh JS -->
+                                </button>
+                                <p id="formMateriMessage" class="col-span-3 text-sm text-center hidden"></p>
+                            </form>
+                        </div>
+
+                        <!-- Bagian Pencarian dan Daftar Materi -->
+                        <div class="bg-white p-6 md:p-8 rounded-xl shadow-xl">
+                            <h2 class="text-2xl font-semibold text-yellow-700 mb-4 flex items-center space-x-2">
+                                <i data-lucide="list" class="w-6 h-6"></i>
+                                <span>Daftar Materi</span>
+                            </h2
+                             <!-- Input Pencarian Materi -->
+                            <input type="text" id="searchMateri" placeholder="Cari berdasarkan Judul atau Pembuat..."
+                                class="w-full p-3 mb-6 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
+
+                            <!-- Tabel Materi -->
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th onclick="handleHeaderSortClick('judul_materi', 'materi')" data-sort-key="judul_materi" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 sortable-header">
+                                                <div class="flex items-center space-x-1"><span>Judul Materi</span> <span class="sort-icon-wrapper materi" data-col="judul_materi"></span></div>
+                                            </th>
+                                            <th onclick="handleHeaderSortClick('divisi', 'materi')" data-sort-key="divisi" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 sortable-header">
+                                                <div class="flex items-center space-x-1"><span>Divisi</span> <span class="sort-icon-wrapper materi" data-col="divisi"></span></div>
+                                            </th>
+                                            <th onclick="handleHeaderSortClick('pembuat', 'materi')" data-sort-key="pembuat" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell cursor-pointer hover:bg-gray-100 sortable-header">
+                                                <div class="flex items-center space-x-1"><span>Pembuat</span> <span class="sort-icon-wrapper materi" data-col="pembuat"></span></div>
+                                            </th>
+                                            <th onclick="handleHeaderSortClick('tanggal_jadi', 'materi')" data-sort-key="tanggal_jadi" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell cursor-pointer hover:bg-gray-100 sortable-header">
+                                                <div class="flex items-center space-x-1"><span>Tgl Jadi</span> <span class="sort-icon-wrapper materi" data-col="tanggal_jadi"></span></div>
+                                            </th>
+                                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="materiList" class="bg-white divide-y divide-gray-200">
+                                        <!-- Data materi akan dimasukkan di sini oleh JavaScript -->
+                                    </tbody>
+                                </table>
+                                <p id="noMateriDataMessage" class="hidden p-4 text-center text-gray-500 mt-4">Tidak ada materi yang ditemukan.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
         </div>
     </div>
 
-    <!-- BAGIAN 3: MODAL EDIT PAPER -->
+    <!-- BAGIAN 3: MODAL EDIT PAPER (Tidak Berubah) -->
     <div id="editModal" class="modal-overlay hidden">
         <div class="modal-content">
             <h3 class="text-2xl font-bold text-yellow-700 mb-4 flex items-center space-x-2 border-b pb-2">
                 <i data-lucide="file-edit" class="w-6 h-6"></i>
                 <span>Edit Detail Paper</span>
             </h3>
-            <button onclick="closeEditModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+            <button onclick="closeEditModal('paper')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
                 <i data-lucide="x" class="w-6 h-6"></i>
             </button>
             <form id="editPaperForm" class="space-y-4">
-                <input type="hidden" id="edit-id">
+                <input type="hidden" id="edit-id-paper">
                 
-                <!-- CONTAINER GRID DUA KOLOM -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    
-                    <!-- BARIS 1: Judul Paper (Display) & Deadline -->
                     <div>
                         <label class="block text-gray-700 text-sm font-bold mb-1">Judul Paper (ID)</label>
-                        <p id="edit-title-display" class="w-full p-3 bg-gray-100 border border-gray-300 rounded-lg font-semibold text-gray-800 truncate"></p>
+                        <p id="edit-title-display-paper" class="w-full p-3 bg-gray-100 border border-gray-300 rounded-lg font-semibold text-gray-800 truncate"></p>
                     </div>
                     <div>
-                        <label class="block text-gray-700 text-sm font-bold mb-1" for="edit-deadline">Deadline</label>
-                        <input type="date" id="edit-deadline"
+                        <label class="block text-gray-700 text-sm font-bold mb-1" for="edit-deadline-paper">Deadline</label>
+                        <input type="date" id="edit-deadline-paper"
                             class="w-full p-3 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
                     </div>
 
-                    <!-- BARIS 2: Penulis & Link Referensi -->
                     <div>
-                        <label class="block text-gray-700 text-sm font-bold mb-1" for="edit-authors">Penulis</label>
-                        <input type="text" id="edit-authors" placeholder="Nama Penulis (Pisahkan dengan koma)"
+                        <label class="block text-gray-700 text-sm font-bold mb-1" for="edit-authors-paper">Penulis</label>
+                        <input type="text" id="edit-authors-paper" placeholder="Nama Penulis (Pisahkan dengan koma)"
                             class="w-full p-3 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
                     </div>
                     <div>
-                        <label class="block text-gray-700 text-sm font-bold mb-1" for="edit-reference_link">Link Referensi</label>
-                        <input type="url" id="edit-reference_link" placeholder="Link Referensi (URL)"
+                        <label class="block text-gray-700 text-sm font-bold mb-1" for="edit-reference_link-paper">Link Referensi</label>
+                        <input type="url" id="edit-reference_link-paper" placeholder="Link Referensi (URL)"
                             class="w-full p-3 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
                     </div>
 
-                    <!-- BARIS 3: Status & Link Overleaf -->
                     <div>
-                        <label class="block text-gray-700 text-sm font-bold mb-1" for="edit-status">Status (Wajib)</label>
-                        <select id="edit-status" required
+                        <label class="block text-gray-700 text-sm font-bold mb-1" for="edit-status-paper">Status (Wajib)</label>
+                        <select id="edit-status-paper" required
                             class="w-full p-3 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
                             <option value="Draft">Draft</option>
                             <option value="Submitted">Submitted</option>
@@ -297,30 +456,86 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-gray-700 text-sm font-bold mb-1" for="edit-overleaf_link">Link Overleaf</label>
-                        <input type="url" id="edit-overleaf_link" placeholder="Link Overleaf (URL)"
+                        <label class="block text-gray-700 text-sm font-bold mb-1" for="edit-overleaf_link-paper">Link Overleaf</label>
+                        <input type="url" id="edit-overleaf_link-paper" placeholder="Link Overleaf (URL)"
                             class="w-full p-3 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
                     </div>
 
-                    <!-- BARIS 4: Kategori & Link PPT/Slide -->
                     <div>
-                        <label class="block text-gray-700 text-sm font-bold mb-1" for="edit-category">Kategori</label>
-                        <input type="text" id="edit-category" placeholder="Kategori (Jurnal/Konferensi/Lainnya)"
+                        <label class="block text-gray-700 text-sm font-bold mb-1" for="edit-category-paper">Kategori</label>
+                        <input type="text" id="edit-category-paper" placeholder="Kategori (Jurnal/Konferensi/Lainnya)"
                             class="w-full p-3 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
                     </div>
                     <div>
-                        <label class="block text-gray-700 text-sm font-bold mb-1" for="edit-ppt_link">Link PPT/Slide</label>
-                        <input type="url" id="edit-ppt_link" placeholder="Link PPT/Slide (URL)"
+                        <label class="block text-gray-700 text-sm font-bold mb-1" for="edit-ppt_link-paper">Link PPT/Slide</label>
+                        <input type="url" id="edit-ppt_link-paper" placeholder="Link PPT/Slide (URL)"
                             class="w-full p-3 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
                     </div>
                 </div>
 
-                <!-- Pesan dan Tombol Aksi (Full width) -->
-                <p id="editFormMessage" class="text-sm text-center font-semibold hidden"></p>
+                <p id="editFormPaperMessage" class="text-sm text-center font-semibold hidden"></p>
 
-                <button type="submit" id="saveEditButton"
+                <button type="submit" id="saveEditPaperButton"
                     class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-lg transition duration-300 shadow-md disabled:opacity-50 flex items-center justify-center space-x-2">
                     <i data-lucide="check" class="w-5 h-5"></i> <span>Simpan Perubahan</span>
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- BAGIAN 4: MODAL EDIT MATERI (BARU) -->
+    <div id="editMateriModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3 class="text-2xl font-bold text-yellow-700 mb-4 flex items-center space-x-2 border-b pb-2">
+                <i data-lucide="file-edit" class="w-6 h-6"></i>
+                <span>Edit Detail Materi</span>
+            </h3>
+            <button onclick="closeEditModal('materi')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <form id="editMateriForm" class="space-y-4">
+                <input type="hidden" id="edit-id-materi">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-1">Judul Materi</label>
+                        <input type="text" id="edit-judul_materi" placeholder="Judul Materi (Wajib)" required
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-1" for="edit-divisi">Divisi (Wajib)</label>
+                        <select id="edit-divisi" required
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
+                            <option value="5G">5G</option>
+                            <option value="IoT">IoT</option>
+                            <option value="Umum">Umum</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-1" for="edit-pembuat">Pembuat</label>
+                        <input type="text" id="edit-pembuat" placeholder="Nama Pembuat"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-1" for="edit-tanggal_jadi">Tanggal Jadi</label>
+                        <input type="date" id="edit-tanggal_jadi" placeholder="Tanggal Jadi"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
+                    </div>
+                </div>
+
+                <!-- Link Materi (Full width) -->
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-1" for="edit-link_materi">Link Materi (Wajib)</label>
+                    <input type="url" id="edit-link_materi" placeholder="Link Materi (URL)" required
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
+                </div>
+
+                <p id="editFormMateriMessage" class="text-sm text-center font-semibold hidden"></p>
+
+                <button type="submit" id="saveEditMateriButton"
+                    class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-lg transition duration-300 shadow-md disabled:opacity-50 flex items-center justify-center space-x-2">
+                    <i data-lucide="check" class="w-5 h-5"></i> <span>Simpan Perubahan Materi</span>
                 </button>
             </form>
         </div>
@@ -334,201 +549,238 @@
 
     <script>
         // --- KONFIGURASI ASET ---
-        // URL GITHUB RAW (MENTAH) DARI LOGO ANDA
         const LOGO_URL = 'https://raw.githubusercontent.com/fitrasadli/pantaupaper/main/Logo%20Hexacomm.png'; 
 
         // --- KONFIGURASI SUPABASE ---
         const SUPABASE_URL = 'https://lkldrnughtjtwlbnzrup.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_P3m8csALCDa3-tJvoLhIBQ_AD_UkmDV';
-        const TABLE_NAME = 'papers';
+        const TABLE_NAME_PAPER = 'papers';
+        const TABLE_NAME_MATERI = 'materi';
         const USER_TABLE_NAME = 'users';
 
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // --- REFERENSI DOM ---
-        // Login Elements
         const loginSection = document.getElementById('loginSection');
         const appSection = document.getElementById('appSection');
         const loginForm = document.getElementById('loginForm');
         const loginError = document.getElementById('loginError');
         const logoutButton = document.getElementById('logoutButton');
-
-        // Logo Elements
         const loginLogo = document.getElementById('loginLogo');
         const headerLogo = document.getElementById('headerLogo');
 
-        // App Elements
+        // Navigasi & View
+        const mainNav = document.getElementById('mainNav');
+        const paperView = document.getElementById('paperView');
+        const materiView = document.getElementById('materiView');
+
+        // Paper Elements
         const papersList = document.getElementById('papersList');
         const paperForm = document.getElementById('paperForm');
-        const searchInput = document.getElementById('search');
-        const noDataMessage = document.getElementById('noDataMessage');
-        const formMessage = document.getElementById('formMessage');
-        const submitButton = document.getElementById('submitButton');
-        
-        // Modal Elements
+        const searchPaperInput = document.getElementById('searchPaper');
+        const noPaperDataMessage = document.getElementById('noPaperDataMessage');
+        const formPaperMessage = document.getElementById('formPaperMessage');
+        const submitPaperButton = document.getElementById('submitPaperButton');
         const editModal = document.getElementById('editModal');
         const editPaperForm = document.getElementById('editPaperForm');
-        const editFormMessage = document.getElementById('editFormMessage');
-        const saveEditButton = document.getElementById('saveEditButton');
+        const editFormPaperMessage = document.getElementById('editFormPaperMessage');
+        const saveEditPaperButton = document.getElementById('saveEditPaperButton');
 
-        // Status Sorting Global (Diubah untuk kompatibilitas header)
-        let currentSortCol = 'created_at'; // Default sort kolom: Tanggal Ditambahkan
-        let currentSortOrder = 'desc'; // Default sort order: Descending (Terbaru)
-        
-        // Mapping kolom ke tampilan UI
-        const sortableColumns = ['title', 'authors', 'status', 'category', 'deadline'];
+        // Materi Elements
+        const materiList = document.getElementById('materiList');
+        const materiForm = document.getElementById('materiForm');
+        const searchMateriInput = document.getElementById('searchMateri');
+        const noMateriDataMessage = document.getElementById('noMateriDataMessage');
+        const formMateriMessage = document.getElementById('formMateriMessage');
+        const submitMateriButton = document.getElementById('submitMateriButton');
+        const editMateriModal = document.getElementById('editMateriModal');
+        const editMateriForm = document.getElementById('editMateriForm');
+        const editFormMateriMessage = document.getElementById('editFormMateriMessage');
+        const saveEditMateriButton = document.getElementById('saveEditMateriButton');
 
-        // --- LOGIKA SORTING HEADER BARU ---
+        // Status Sorting Global (Dipisahkan berdasarkan jenis)
+        const sortState = {
+            paper: { col: 'created_at', order: 'desc' },
+            materi: { col: 'created_at', order: 'desc' }
+        };
         
-        function updateTableHeaders() {
-            // Hapus semua ikon sort sebelumnya
-            document.querySelectorAll('.sort-icon-wrapper').forEach(wrapper => {
-                wrapper.innerHTML = '';
+        let currentActiveView = 'paper'; // Default view saat login
+
+        // --- LOGIKA UTILITY ---
+        function renderButtonContent(text, icon = 'file-plus') {
+            const spinClass = icon === 'loader-circle' ? 'animate-spin-fast' : '';
+            return `<i data-lucide="${icon}" class="w-5 h-5 mr-2 ${spinClass}"></i> <span>${text}</span>`;
+        }
+
+        // --- LOGIKA NAVIGASI DAN VIEW --- 
+        
+        function showView(viewName) {
+            currentActiveView = viewName;
+            
+            // Sembunyikan semua view dan reset navigasi
+            document.querySelectorAll('.view-content').forEach(view => {
+                if (view) view.classList.add('hidden');
+            });
+            document.querySelectorAll('.nav-item').forEach(nav => {
+                if (nav) {
+                    nav.classList.remove('nav-item-active');
+                    nav.classList.add('nav-item-inactive');
+                }
             });
 
-            // Tentukan ikon berdasarkan urutan saat ini
-            const icon = currentSortOrder === 'asc' ? 'arrow-up' : 'arrow-down';
+            // Tampilkan view yang sesuai dan atur status navigasi
+            const targetView = document.getElementById(`${viewName}View`);
+            const targetNav = document.getElementById(`nav-${viewName}`);
+
+            if (targetView) targetView.classList.remove('hidden');
+            if (targetNav) {
+                targetNav.classList.add('nav-item-active');
+                targetNav.classList.remove('nav-item-inactive');
+            }
+
+            // Muat data untuk view yang aktif
+            if (viewName === 'paper') {
+                const searchTerm = searchPaperInput ? searchPaperInput.value : '';
+                fetchPapers(searchTerm);
+            } else if (viewName === 'materi') {
+                const searchTerm = searchMateriInput ? searchMateriInput.value : '';
+                fetchMateri(searchTerm);
+            }
+            lucide.createIcons(); // Re-render icons
+        }
+        
+        mainNav && mainNav.addEventListener('click', (e) => {
+            const navItem = e.target.closest('.nav-item');
+            if (navItem) {
+                const view = navItem.getAttribute('data-view');
+                showView(view);
+            }
+        });
+
+        // --- LOGIKA SORTING HEADER UNTUK KEDUA TABEL ---
+        
+        function updateTableHeaders(type) {
+            // Hapus semua ikon sort untuk tipe ini
+            document.querySelectorAll(`.sort-icon-wrapper.${type}`).forEach(wrapper => {
+                if (wrapper) wrapper.innerHTML = '';
+            });
+
+            const state = sortState[type];
+            const icon = state.order === 'asc' ? 'arrow-up' : 'arrow-down';
             
             // Cari wrapper ikon untuk kolom yang sedang aktif
-            const activeWrapper = document.querySelector(`.sort-icon-wrapper[data-col="${currentSortCol}"]`);
+            const activeWrapper = document.querySelector(`.sort-icon-wrapper.${type}[data-col="${state.col}"]`);
             if (activeWrapper) {
-                // Tambahkan ikon baru
                 activeWrapper.innerHTML = `<i data-lucide="${icon}" class="w-3 h-3 text-yellow-600"></i>`;
-                // Render ikon
                 lucide.createIcons();
             }
         }
 
-        window.handleHeaderSortClick = (column) => {
-            // Jika mengklik kolom yang sama, balikkan urutan
-            if (currentSortCol === column) {
-                currentSortOrder = currentSortOrder === 'asc' ? 'desc' : 'asc';
+        window.handleHeaderSortClick = (column, type) => {
+            const state = sortState[type];
+            
+            if (state.col === column) {
+                state.order = state.order === 'asc' ? 'desc' : 'asc';
             } else {
-                // Jika mengklik kolom baru, ubah kolom dan set default order ke ascending
-                // NOTE: Mengubah default ke 'asc' atau 'desc' tergantung preferensi, tapi 'asc' lebih umum untuk kolom baru.
-                currentSortCol = column;
-                currentSortOrder = 'asc'; 
+                state.col = column;
+                state.order = 'asc'; 
             }
 
-            // Muat ulang data dengan parameter sorting yang baru
-            fetchPapers(searchInput.value);
-            
-            // Perbarui ikon header secara visual (akan dipanggil lagi di fetchPapers, tapi ini untuk immediate feedback)
-            updateTableHeaders();
+            if (type === 'paper') {
+                const searchTerm = searchPaperInput ? searchPaperInput.value : '';
+                fetchPapers(searchTerm);
+            } else if (type === 'materi') {
+                const searchTerm = searchMateriInput ? searchMateriInput.value : '';
+                fetchMateri(searchTerm);
+            }
+            updateTableHeaders(type); // Di sini kita panggil untuk update visual segera
         };
-        
-        // --- LOGIKA LOGIN ---
 
-        // Fungsi untuk mengatur URL logo
+        // --- LOGIKA LOGIN (Tidak Berubah) ---
         function setLogos() {
-            loginLogo.src = LOGO_URL;
-            // Gunakan logo yang sama atau versi yang berbeda untuk header
-            headerLogo.src = LOGO_URL; 
+            if (loginLogo) loginLogo.src = LOGO_URL;
+            if (headerLogo) headerLogo.src = LOGO_URL; 
         }
 
-        // Cek sesi saat halaman dimuat
         function checkSession() {
-            setLogos(); // Atur logo saat pertama kali dimuat
+            setLogos();
             const isLoggedIn = sessionStorage.getItem('isLoggedIn');
             if (isLoggedIn === 'true') {
                 showApp();
-                // Panggil fetchPapers saat sesi ditemukan (page refresh)
-                fetchPapers(); 
+                // Tampilkan view default saat login berhasil
+                showView(currentActiveView);
             } else {
                 showLogin();
             }
         }
 
         function showLogin() {
-            loginSection.classList.remove('hidden');
-            appSection.classList.add('hidden');
-            // Hanya menghapus kelas gelap jika ada, membiarkan CSS default berlaku
-            document.body.classList.remove('bg-gray-900'); 
+            if (loginSection) loginSection.classList.remove('flex-grow', 'hidden');
+            if (appSection) appSection.classList.add('hidden');
         }
 
         function showApp() {
-            loginSection.classList.add('hidden');
-            appSection.classList.remove('hidden');
-            // Hanya menghapus kelas gelap jika ada, membiarkan CSS default (#ffffff) berlaku
-            document.body.classList.remove('bg-gray-900');
+            if (loginSection) loginSection.classList.add('hidden');
+            if (appSection) appSection.classList.remove('hidden');
         }
 
-        // Event Listener Login yang Diperbarui (Menggunakan Database)
-        loginForm.addEventListener('submit', async (e) => {
+        loginForm && loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const user = document.getElementById('username').value;
             const pass = document.getElementById('password').value;
             const submitBtn = loginForm.querySelector('button[type="submit"]');
 
-            // Feedback visual loading
             const originalText = submitBtn.innerText;
             submitBtn.disabled = true;
             submitBtn.innerText = "Memeriksa...";
-            loginError.classList.add('hidden');
+            if (loginError) loginError.classList.add('hidden');
 
             try {
                 const { data, error } = await supabaseClient
-                    .from('users')
+                    .from(USER_TABLE_NAME)
                     .select('*')
                     .eq('username', user)
                     .eq('password', pass)
                     .maybeSingle();
 
-                if (error) {
-                    throw error;
-                }
+                if (error) throw error;
 
                 if (data) {
-                    // Login Sukses
                     sessionStorage.setItem('isLoggedIn', 'true');
                     showApp();
-                    // Panggil fetchPapers setelah login sukses
-                    fetchPapers(); 
+                    showView(currentActiveView); // Tampilkan view default
                 } else {
-                    // Login Gagal (User tidak ditemukan atau password salah)
                     throw new Error("Username atau Password salah!");
                 }
             } catch (err) {
                 console.error("Login error:", err);
-                // Menangani pesan error
                 let errorMessage = "Terjadi kesalahan saat login.";
                 if (err.message) {
                     if (err.message.includes('relation "users" does not exist')) {
-                        errorMessage = "Error: Tabel 'users' belum dibuat di database. Silakan buat tabel users dengan kolom username dan password.";
+                        errorMessage = "Error: Tabel 'users' belum dibuat di database.";
                     } else if (err.message.includes('Username atau Password salah')) {
                         errorMessage = err.message;
                     } else {
                         errorMessage = "Terjadi kesalahan koneksi. Periksa konsol untuk detail.";
                     }
                 }
-                loginError.textContent = errorMessage;
-                loginError.classList.remove('hidden');
+                if (loginError) {
+                    loginError.textContent = errorMessage;
+                    loginError.classList.remove('hidden');
+                }
             } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerText = originalText;
+                if (submitBtn) submitBtn.disabled = false;
+                if (submitBtn) submitBtn.innerText = originalText;
             }
         });
 
-        logoutButton.addEventListener('click', () => {
+        logoutButton && logoutButton.addEventListener('click', () => {
             sessionStorage.removeItem('isLoggedIn');
-            window.location.reload(); // Reload halaman untuk reset state
+            window.location.reload(); 
         });
 
-        // --- LOGIKA APLIKASI (PAPER) ---
+        // --- LOGIKA PAPER ---
         
-        // Helper function for Submit Button content
-        function renderSubmitButton(text, icon = 'file-plus') {
-            const spinClass = icon === 'loader-circle' ? 'animate-spin-fast' : '';
-            return `<i data-lucide="${icon}" class="w-5 h-5 mr-2 ${spinClass}"></i> <span>${text}</span>`;
-        }
-        
-        // Helper function for Edit Button content
-        function renderSaveButton(text, icon = 'check') {
-            const spinClass = icon === 'loader-circle' ? 'animate-spin-fast' : '';
-            return `<i data-lucide="${icon}" class="w-5 h-5 mr-2 ${spinClass}"></i> <span>${text}</span>`;
-        }
-
-        // FUNGSI GET STATUS BADGE DENGAN IKON BARU
         function getStatusBadge(status) {
             let color = '';
             let icon = '';
@@ -541,24 +793,20 @@
                 default: color = 'bg-gray-100 text-gray-800 border border-gray-300'; icon = 'file';
             }
             return `
+
                 <span class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full items-center space-x-1 ${color}">
                     <i data-lucide="${icon}" class="w-3 h-3"></i>
                     <span>${status}</span>
                 </span>
             `;
         }
-        
-        // FUNGSI PAPER ROW DENGAN TOMBOL EDIT (Diperbarui)
-        function createPaperRow(paper) {
-            const deadlineDate = paper.deadline ? new Date(paper.deadline).toLocaleDateString('id-ID') : '-';
 
-            // Mengubah format objek paper menjadi string JSON yang aman untuk di passing ke onclick
+        function createPaperRow(paper) {
+            const deadlineDate = paper.deadline ? new Date(paper.deadline).toLocaleDateString('id-ID', { year: 'numeric', month: 'short', day: 'numeric' }) : '-';
             const paperJson = JSON.stringify(paper).replace(/'/g, "\\'");
-            
-            // Ikon Tautan yang Diperbarui
+
             const linkIcon = (url, iconName, label) => {
                 if (!url) return '';
-                // Ensure URL starts with http:// or https:// for valid link
                 const safeUrl = url.startsWith('http') || url.startsWith('https') ? url : `https://${url}`;
                 return `
                     <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" 
@@ -574,7 +822,7 @@
                 ${linkIcon(paper.overleaf_link, 'file-text', 'Link Overleaf')}
                 ${linkIcon(paper.ppt_link, 'monitor', 'Link PPT')}
             `;
-            
+
             return `
                 <tr class="hover:bg-yellow-50 transition duration-150">
                     <td class="px-3 py-4 whitespace-normal text-sm font-medium text-gray-900">${paper.title}</td>
@@ -584,8 +832,7 @@
                     <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500 hidden sm:table-cell">${deadlineDate}</td>
                     <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-700 flex space-x-1 items-center">
                         ${links}
-                        <!-- TOMBOL EDIT BARU -->
-                        <button onclick='openEditModal(${paperJson})'
+                        <button onclick='openEditModal("paper", ${paperJson})'
                             class="p-1 rounded-full border border-blue-200 bg-blue-50 text-blue-600 hover:bg-blue-200 hover:border-blue-400 transition duration-200 shadow-sm" 
                             title="Edit Paper">
                             <i data-lucide="edit-3" class="w-4 h-4"></i>
@@ -594,37 +841,34 @@
                 </tr>
             `;
         }
-        
-        async function fetchPapers(searchTerm = '') {
-            noDataMessage.classList.add('hidden');
-            
-            // Tentukan parameter sorting
-            const sortBy = currentSortCol;
-            const isAscending = currentSortOrder === 'asc'; // Supabase menggunakan boolean ascending
 
-            // Tampilkan baris loading di dalam tbody
+        async function fetchPapers(searchTerm = '') {
+            // PERBAIKAN: Tambahkan null check di awal fungsi
+            if (!papersList || !noPaperDataMessage) {
+                console.error("Error: Element papersList or noPaperDataMessage not found.");
+                return;
+            }
+            noPaperDataMessage.classList.add('hidden');
+            
+            const state = sortState.paper;
+            
             papersList.innerHTML = `
-                <tr id="loadingRow">
+                <tr>
                     <td colspan="6" class="p-4 text-center text-gray-500 flex items-center justify-center">
                         <i data-lucide="loader-circle" class="w-5 h-5 mr-2 animate-spin-fast"></i>
-                        Memuat data...
+                        Memuat data paper...
                     </td>
-                </div>
                 </tr>
             `;
-            // Inisialisasi Lucide untuk memastikan ikon loading terlihat
             lucide.createIcons();
-            // Perbarui ikon header sorting
-            updateTableHeaders();
+            updateTableHeaders('paper');
 
             try {
-                let query = supabaseClient.from(TABLE_NAME)
+                let query = supabaseClient.from(TABLE_NAME_PAPER)
                     .select('*')
-                    // Terapkan Sorting
-                    .order(sortBy, { ascending: isAscending }); 
+                    .order(state.col, { ascending: state.order === 'asc' }); 
 
                 if (searchTerm) {
-                    // Menggunakan operator 'or' untuk mencari di dua kolom
                     const searchPattern = `%${searchTerm.toLowerCase()}%`;
                     query = query.or(`title.ilike.${searchPattern},authors.ilike.${searchPattern}`);
                 }
@@ -632,11 +876,9 @@
                 const { data, error } = await query;
 
                 if (error) {
-                    // Tampilkan pesan error RLS/koneksi
                     let errorMessage = error.message.includes('permission denied')
-                        ? `Akses Ditolak (RLS Error). Mohon periksa kebijakan Row-Level Security (RLS) di tabel '${TABLE_NAME}' Supabase.`
-                        : `Gagal memuat data: ${error.message}. (Cek Konsol)`;
-                    
+                        ? `Akses Ditolak (RLS Error). Cek RLS tabel '${TABLE_NAME_PAPER}'.`
+                        : `Gagal memuat data: ${error.message}`;
                     papersList.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-red-500 font-bold">${errorMessage}</td></tr>`;
                     throw error;
                 }
@@ -646,21 +888,18 @@
                     data.forEach(paper => {
                         papersList.insertAdjacentHTML('beforeend', createPaperRow(paper));
                     });
-                    // Inisialisasi Lucide Icons setelah data dimuat (termasuk tombol Edit)
                     lucide.createIcons(); 
                 } else {
-                    noDataMessage.classList.remove('hidden');
+                    noPaperDataMessage.classList.remove('hidden');
                 }
 
             } catch (error) {
-                // Jangan lakukan apa-apa di sini karena error sudah ditampilkan di blok try
-                console.error('Final fetching error (logged):', error.message);
+                console.error('Final fetching paper error:', error.message);
             }
         }
 
-        async function addPaper(event) {
+        paperForm && paperForm.addEventListener('submit', async (event) => {
             event.preventDefault();
-
             const newPaper = {
                 title: document.getElementById('title').value.trim(),
                 authors: document.getElementById('authors').value.trim() || null,
@@ -673,155 +912,350 @@
             };
 
             if (!newPaper.title || !newPaper.status) {
-                showMessage('Judul dan Status wajib diisi!', 'text-red-500');
+                showMessage(formPaperMessage, 'Judul dan Status wajib diisi!', 'text-red-500');
                 return;
             }
 
-            submitButton.disabled = true;
-            submitButton.innerHTML = renderSubmitButton('Menyimpan...', 'loader-circle');
+            if (submitPaperButton) submitPaperButton.disabled = true;
+            if (submitPaperButton) submitPaperButton.innerHTML = renderButtonContent('Menyimpan...', 'loader-circle');
             lucide.createIcons();
 
             try {
-                const { error } = await supabaseClient.from(TABLE_NAME).insert([newPaper]);
+                const { error } = await supabaseClient.from(TABLE_NAME_PAPER).insert([newPaper]);
 
                 if (error) throw error;
 
                 paperForm.reset();
-                showMessage('Paper berhasil ditambahkan!', 'text-green-500');
-                // Muat ulang daftar dengan filter pencarian yang mungkin aktif
-                fetchPapers(searchInput.value);
+                showMessage(formPaperMessage, 'Paper berhasil ditambahkan!', 'text-green-500');
+                
+                // Tambahkan null check pada search input
+                const paperSearchTerm = searchPaperInput ? searchPaperInput.value : '';
+                fetchPapers(paperSearchTerm);
 
             } catch (error) {
                 console.error('Error adding paper:', error.message);
                 let errorMessage = error.message.includes('permission denied')
-                    ? `Gagal menambahkan paper: Akses Ditolak (RLS Error). Mohon cek kebijakan INSERT di Supabase.`
+                    ? `Gagal menambahkan paper: Akses Ditolak (RLS Error).`
                     : `Gagal menambahkan paper: ${error.message}`;
-                showMessage(errorMessage, 'text-red-500');
+                showMessage(formPaperMessage, errorMessage, 'text-red-500');
             } finally {
-                submitButton.disabled = false;
-                submitButton.innerHTML = renderSubmitButton('Tambah Paper', 'file-plus');
+                if (submitPaperButton) submitPaperButton.disabled = false;
+                if (submitPaperButton) submitPaperButton.innerHTML = renderButtonContent('Tambah Paper', 'file-plus');
                 lucide.createIcons();
+            }
+        });
+        
+        // --- LOGIKA MODAL EDIT PAPER ---
+        window.openEditModal = (type, data) => {
+            if (type === 'paper') {
+                if (document.getElementById('edit-id-paper')) document.getElementById('edit-id-paper').value = data.id;
+                if (document.getElementById('edit-title-display-paper')) document.getElementById('edit-title-display-paper').textContent = data.title;
+                if (document.getElementById('edit-authors-paper')) document.getElementById('edit-authors-paper').value = data.authors || '';
+                if (document.getElementById('edit-status-paper')) document.getElementById('edit-status-paper').value = data.status;
+                if (document.getElementById('edit-category-paper')) document.getElementById('edit-category-paper').value = data.category || '';
+                
+                if (document.getElementById('edit-deadline-paper')) document.getElementById('edit-deadline-paper').value = data.deadline ? data.deadline.split('T')[0] : '';
+                
+                if (document.getElementById('edit-reference_link-paper')) document.getElementById('edit-reference_link-paper').value = data.reference_link || '';
+                if (document.getElementById('edit-overleaf_link-paper')) document.getElementById('edit-overleaf_link-paper').value = data.overleaf_link || '';
+                if (document.getElementById('edit-ppt_link-paper')) document.getElementById('edit-ppt_link-paper').value = data.ppt_link || '';
+
+                if (editFormPaperMessage) editFormPaperMessage.classList.add('hidden');
+                if (editModal) editModal.classList.remove('hidden');
+            } else if (type === 'materi') {
+                if (document.getElementById('edit-id-materi')) document.getElementById('edit-id-materi').value = data.id;
+                if (document.getElementById('edit-judul_materi')) document.getElementById('edit-judul_materi').value = data.judul_materi;
+                if (document.getElementById('edit-divisi')) document.getElementById('edit-divisi').value = data.divisi;
+                if (document.getElementById('edit-pembuat')) document.getElementById('edit-pembuat').value = data.pembuat || '';
+                if (document.getElementById('edit-tanggal_jadi')) document.getElementById('edit-tanggal_jadi').value = data.tanggal_jadi ? data.tanggal_jadi.split('T')[0] : '';
+                if (document.getElementById('edit-link_materi')) document.getElementById('edit-link_materi').value = data.link_materi || '';
+                
+                if (editFormMateriMessage) editFormMateriMessage.classList.add('hidden');
+                if (editMateriModal) editMateriModal.classList.remove('hidden');
+            }
+            lucide.createIcons();
+        }
+
+        window.closeEditModal = (type) => {
+            if (type === 'paper') {
+                if (editModal) editModal.classList.add('hidden');
+            } else if (type === 'materi') {
+                if (editMateriModal) editMateriModal.classList.add('hidden');
             }
         }
         
-        // --- LOGIKA EDIT MODAL ---
-
-        // Mengisi modal dengan data paper yang dipilih
-        function openEditModal(paper) {
-            document.getElementById('edit-id').value = paper.id;
-            document.getElementById('edit-title-display').textContent = paper.title; // Judul hanya display
-            
-            // Kolom yang dapat diubah
-            document.getElementById('edit-authors').value = paper.authors || '';
-            document.getElementById('edit-status').value = paper.status;
-            document.getElementById('edit-category').value = paper.category || '';
-            
-            // Format deadline untuk input type="date" (YYYY-MM-DD)
-            document.getElementById('edit-deadline').value = paper.deadline ? paper.deadline.split('T')[0] : '';
-
-            // Link
-            document.getElementById('edit-reference_link').value = paper.reference_link || '';
-            document.getElementById('edit-overleaf_link').value = paper.overleaf_link || '';
-            document.getElementById('edit-ppt_link').value = paper.ppt_link || '';
-
-            editFormMessage.classList.add('hidden');
-            editModal.classList.remove('hidden');
-            lucide.createIcons(); // Re-render icons in modal
-        }
-
-        function closeEditModal() {
-            editModal.classList.add('hidden');
-        }
-
-        // Fungsi untuk menyimpan hasil edit
-        editPaperForm.addEventListener('submit', async (e) => {
+        editPaperForm && editPaperForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
-            const paperId = document.getElementById('edit-id').value;
+            const paperId = document.getElementById('edit-id-paper').value;
             const updatedPaper = {
-                authors: document.getElementById('edit-authors').value.trim() || null,
-                status: document.getElementById('edit-status').value,
-                category: document.getElementById('edit-category').value.trim() || null,
-                deadline: document.getElementById('edit-deadline').value || null,
-                reference_link: document.getElementById('edit-reference_link').value.trim() || null,
-                overleaf_link: document.getElementById('edit-overleaf_link').value.trim() || null,
-                ppt_link: document.getElementById('edit-ppt_link').value.trim() || null,
+                authors: document.getElementById('edit-authors-paper').value.trim() || null,
+                status: document.getElementById('edit-status-paper').value,
+                category: document.getElementById('edit-category-paper').value.trim() || null,
+                deadline: document.getElementById('edit-deadline-paper').value || null,
+                reference_link: document.getElementById('edit-reference_link-paper').value.trim() || null,
+                overleaf_link: document.getElementById('edit-overleaf_link-paper').value.trim() || null,
+                ppt_link: document.getElementById('edit-ppt_link-paper').value.trim() || null,
             };
 
-            // Perubahan UI saat menyimpan
-            saveEditButton.disabled = true;
-            saveEditButton.innerHTML = renderSaveButton('Menyimpan...', 'loader-circle');
+            if (saveEditPaperButton) saveEditPaperButton.disabled = true;
+            if (saveEditPaperButton) saveEditPaperButton.innerHTML = renderButtonContent('Menyimpan...', 'loader-circle');
             lucide.createIcons();
 
             try {
-                // Supabase UPDATE operation
                 const { error } = await supabaseClient
-                    .from(TABLE_NAME)
+                    .from(TABLE_NAME_PAPER)
                     .update(updatedPaper)
                     .eq('id', paperId);
 
                 if (error) throw error;
 
-                showEditMessage('Perubahan berhasil disimpan!', 'text-green-500');
+                showMessage(editFormPaperMessage, 'Perubahan berhasil disimpan!', 'text-green-500');
                 
-                // Refresh data di latar belakang
-                fetchPapers(searchInput.value); 
-                
-                // Tutup modal setelah jeda singkat
-                setTimeout(closeEditModal, 1000);
+                // Tambahkan null check pada search input
+                const paperSearchTerm = searchPaperInput ? searchPaperInput.value : '';
+                fetchPapers(paperSearchTerm);
+
+                setTimeout(closeEditModal.bind(null, 'paper'), 1000);
 
             } catch (error) {
                 console.error('Error updating paper:', error.message);
                 let errorMessage = error.message.includes('permission denied')
-                    ? `Gagal menyimpan: Akses Ditolak (RLS Error). Cek kebijakan UPDATE di Supabase.`
+                    ? `Gagal menyimpan: Akses Ditolak (RLS Error).`
                     : `Gagal menyimpan: ${error.message}`;
-                showEditMessage(errorMessage, 'text-red-500');
+                showMessage(editFormPaperMessage, errorMessage, 'text-red-500');
             } finally {
-                saveEditButton.disabled = false;
-                saveEditButton.innerHTML = renderSaveButton('Simpan Perubahan', 'check');
+                if (saveEditPaperButton) saveEditPaperButton.disabled = false;
+                if (saveEditPaperButton) saveEditPaperButton.innerHTML = renderButtonContent('Simpan Perubahan', 'check');
                 lucide.createIcons();
             }
         });
 
-        function showMessage(message, colorClass) {
-            formMessage.textContent = message;
-            formMessage.className = `col-span-3 text-sm text-center font-semibold ${colorClass}`;
-            formMessage.classList.remove('hidden');
+
+        // --- LOGIKA MATERI BARU ---
+        
+        function createMateriRow(materi) {
+            const tanggalJadi = materi.tanggal_jadi ? new Date(materi.tanggal_jadi).toLocaleDateString('id-ID', { year: 'numeric', month: 'short', day: 'numeric' }) : '-';
+            const materiJson = JSON.stringify(materi).replace(/'/g, "\\'");
+            
+            const badgeColor = materi.divisi === '5G' ? 'bg-indigo-100 text-indigo-800' : 
+                               materi.divisi === 'IoT' ? 'bg-cyan-100 text-cyan-800' : 'bg-gray-100 text-gray-800';
+
+            return `
+                <tr class="hover:bg-yellow-50 transition duration-150">
+                    <td class="px-3 py-4 whitespace-normal text-sm font-medium text-gray-900">${materi.judul_materi}</td>
+                    <td class="px-3 py-4 whitespace-nowrap text-sm">
+                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full ${badgeColor}">
+                            ${materi.divisi}
+                        </span>
+                    </td>
+                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500 hidden sm:table-cell">${materi.pembuat || '-'}</td>
+                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500 hidden sm:table-cell">${tanggalJadi}</td>
+                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-700 flex space-x-1 items-center">
+                        <a href="${materi.link_materi}" target="_blank" rel="noopener noreferrer" 
+                            class="p-1 rounded-full border border-yellow-200 bg-yellow-50 text-yellow-600 hover:bg-yellow-200 hover:border-yellow-400 transition duration-200 shadow-sm" 
+                            title="Akses Materi">
+                            <i data-lucide="link" class="w-4 h-4"></i>
+                        </a>
+                        <button onclick='openEditModal("materi", ${materiJson})'
+                            class="p-1 rounded-full border border-blue-200 bg-blue-50 text-blue-600 hover:bg-blue-200 hover:border-blue-400 transition duration-200 shadow-sm" 
+                            title="Edit Materi">
+                            <i data-lucide="edit-3" class="w-4 h-4"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }
+
+        async function fetchMateri(searchTerm = '') {
+            // PERBAIKAN: Tambahkan null check di awal fungsi
+            if (!materiList || !noMateriDataMessage) {
+                console.error("Error: Element materiList or noMateriDataMessage not found.");
+                return;
+            }
+            noMateriDataMessage.classList.add('hidden');
+
+            const state = sortState.materi;
+
+            materiList.innerHTML = `
+                <tr>
+                    <td colspan="5" class="p-4 text-center text-gray-500 flex items-center justify-center">
+                        <i data-lucide="loader-circle" class="w-5 h-5 mr-2 animate-spin-fast"></i>
+                        Memuat data materi...
+                    </td>
+                </tr>
+            `;
+            lucide.createIcons();
+            updateTableHeaders('materi');
+
+            try {
+                let query = supabaseClient.from(TABLE_NAME_MATERI)
+                    .select('*')
+                    .order(state.col, { ascending: state.order === 'asc' });
+
+                if (searchTerm) {
+                    const searchPattern = `%${searchTerm.toLowerCase()}%`;
+                    query = query.or(`judul_materi.ilike.${searchPattern},pembuat.ilike.${searchPattern}`);
+                }
+
+                const { data, error } = await query;
+
+                if (error) {
+                    let errorMessage = error.message.includes('relation "materi" does not exist')
+                        ? `Error: Tabel 'materi' belum dibuat di database. Silakan buat tabel materi (Lihat file SQL).`
+                            : (error.message.includes('permission denied')
+                            ? `Akses Ditolak (RLS Error). Cek RLS tabel '${TABLE_NAME_MATERI}'.`
+                            : `Gagal memuat data: ${error.message}`);
+                    materiList.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-red-500 font-bold">${errorMessage}</td></tr>`;
+                    throw error;
+                }
+
+                materiList.innerHTML = '';
+                if (data && data.length > 0) {
+                    data.forEach(materi => {
+                        materiList.insertAdjacentHTML('beforeend', createMateriRow(materi));
+                    });
+                    lucide.createIcons();
+                } else {
+                    noMateriDataMessage.classList.remove('hidden');
+                }
+
+            } catch (error) {
+                console.error('Final fetching materi error:', error.message);
+            }
+        }
+
+        materiForm && materiForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const newMateri = {
+                divisi: document.getElementById('divisi').value,
+                judul_materi: document.getElementById('judul_materi').value.trim(),
+                pembuat: document.getElementById('pembuat').value.trim() || null,
+                tanggal_jadi: document.getElementById('tanggal_jadi').value || null,
+                link_materi: document.getElementById('link_materi').value.trim(),
+            };
+
+            if (!newMateri.divisi || !newMateri.judul_materi || !newMateri.link_materi) {
+                showMessage(formMateriMessage, 'Divisi, Judul, dan Link Materi wajib diisi!', 'text-red-500');
+                return;
+            }
+            
+            if (submitMateriButton) submitMateriButton.disabled = true;
+            if (submitMateriButton) submitMateriButton.innerHTML = renderButtonContent('Menyimpan...', 'loader-circle');
+            lucide.createIcons();
+
+            try {
+                const { error } = await supabaseClient.from(TABLE_NAME_MATERI).insert([newMateri]);
+
+                if (error) throw error;
+
+                materiForm.reset();
+                showMessage(formMateriMessage, 'Materi berhasil ditambahkan!', 'text-green-500');
+                
+                // Tambahkan null check pada search input
+                const materiSearchTerm = searchMateriInput ? searchMateriInput.value : '';
+                fetchMateri(materiSearchTerm);
+
+            } catch (error) {
+                console.error('Error adding materi:', error.message);
+                let errorMessage = error.message.includes('permission denied')
+                    ? `Gagal menambahkan materi: Akses Ditolak (RLS Error).`
+                    : `Gagal menambahkan materi: ${error.message}`;
+                showMessage(formMateriMessage, errorMessage, 'text-red-500');
+            } finally {
+                if (submitMateriButton) submitMateriButton.disabled = false;
+                if (submitMateriButton) submitMateriButton.innerHTML = renderButtonContent('Tambah Materi', 'folder-plus');
+                lucide.createIcons();
+            }
+        });
+
+        editMateriForm && editMateriForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const materiId = document.getElementById('edit-id-materi').value;
+            const updatedMateri = {
+                divisi: document.getElementById('edit-divisi').value,
+                judul_materi: document.getElementById('edit-judul_materi').value.trim(),
+                pembuat: document.getElementById('edit-pembuat').value.trim() || null,
+                tanggal_jadi: document.getElementById('edit-tanggal_jadi').value || null,
+                link_materi: document.getElementById('edit-link_materi').value.trim(),
+            };
+
+            if (!updatedMateri.divisi || !updatedMateri.judul_materi || !updatedMateri.link_materi) {
+                showMessage(editFormMateriMessage, 'Divisi, Judul, dan Link Materi wajib diisi!', 'text-red-500');
+                return;
+            }
+
+            if (saveEditMateriButton) saveEditMateriButton.disabled = true;
+            if (saveEditMateriButton) saveEditMateriButton.innerHTML = renderButtonContent('Menyimpan...', 'loader-circle');
+            lucide.createIcons();
+
+            try {
+                const { error } = await supabaseClient
+                    .from(TABLE_NAME_MATERI)
+                    .update(updatedMateri)
+                    .eq('id', materiId);
+
+                if (error) throw error;
+
+                showMessage(editFormMateriMessage, 'Perubahan berhasil disimpan!', 'text-green-500');
+                
+                // Tambahkan null check pada search input
+                const materiSearchTerm = searchMateriInput ? searchMateriInput.value : '';
+                fetchMateri(materiSearchTerm);
+
+                setTimeout(closeEditModal.bind(null, 'materi'), 1000);
+
+            } catch (error) {
+                console.error('Error updating materi:', error.message);
+                let errorMessage = error.message.includes('permission denied')
+                    ? `Gagal menyimpan: Akses Ditolak (RLS Error).`
+                    : `Gagal menyimpan: ${error.message}`;
+                showMessage(editFormMateriMessage, errorMessage, 'text-red-500');
+            } finally {
+                if (saveEditMateriButton) saveEditMateriButton.disabled = false;
+                if (saveEditMateriButton) saveEditMateriButton.innerHTML = renderButtonContent('Simpan Perubahan Materi', 'check');
+                lucide.createIcons();
+            }
+        });
+
+
+        // --- UTILITY PESAN & EVENT LISTENER PENCARIAN ---
+
+        function showMessage(element, message, colorClass) {
+            if (!element) return; // Tambahkan null check di sini
+            element.textContent = message;
+            element.className = `col-span-3 text-sm text-center font-semibold ${colorClass}`;
+            element.classList.remove('hidden');
             setTimeout(() => {
-                formMessage.classList.add('hidden');
+                element.classList.add('hidden');
             }, 4000);
         }
 
-        function showEditMessage(message, colorClass) {
-            editFormMessage.textContent = message;
-            editFormMessage.className = `col-span-3 text-sm text-center font-semibold ${colorClass}`;
-            editFormMessage.classList.remove('hidden');
-            setTimeout(() => {
-                editFormMessage.classList.add('hidden');
-            }, 3000);
-        }
-
-        // --- EVENT LISTENERS ---
-
-        paperForm.addEventListener('submit', addPaper);
-
         let searchTimeout;
-        searchInput.addEventListener('input', () => {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                fetchPapers(searchInput.value);
-            }, 300); // Debounce 300ms
-        });
+        const setupSearchListeners = () => {
+            searchPaperInput && searchPaperInput.addEventListener('input', () => {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    fetchPapers(searchPaperInput.value);
+                }, 300);
+            });
+
+            searchMateriInput && searchMateriInput.addEventListener('input', () => {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    fetchMateri(searchMateriInput.value);
+                }, 300);
+            });
+        };
 
         // --- INISIALISASI ---
 
         document.addEventListener('DOMContentLoaded', () => {
-            // Set status awal tombol submit
-            submitButton.innerHTML = renderSubmitButton('Tambah Paper', 'file-plus');
+            if (submitPaperButton) submitPaperButton.innerHTML = renderButtonContent('Tambah Paper', 'file-plus');
+            if (submitMateriButton) submitMateriButton.innerHTML = renderButtonContent('Tambah Materi', 'folder-plus');
             
+            setupSearchListeners();
             checkSession();
-            // Inisialisasi awal untuk semua ikon statis
-            lucide.createIcons(); 
+            lucide.createIcons();
         });
 
     </script>
