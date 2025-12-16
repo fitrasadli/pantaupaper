@@ -10,7 +10,8 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f7f7f7;
+            /* Default background for app section - DIJADIKAN PUTIH */
+            background-color: #ffffff;
         }
         .container {
             max-width: 1280px;
@@ -26,61 +27,107 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
         }
+        /* Style for the visual side - GRADIENT DIJADIKAN SANGAT LEMBUT/PUTIH */
+        #visual-side {
+            background: linear-gradient(135deg, #fffcf5, #ffffff); /* Soft Yellowish White ke Pure White */
+            color: #4b5563; /* Warna teks dipertahankan */
+        }
+        /* Keyframe for loading animation */
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        .animate-spin-fast {
+          animation: spin 0.5s linear infinite;
+        }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col"> <!-- Menghapus kelas bg-gray-100 agar CSS internal berlaku -->
 
     <!-- BAGIAN 1: LOGIN SECTION -->
-    <div id="loginSection" class="flex-grow flex items-center justify-center p-4">
-        <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md border-t-4 border-yellow-500">
-            <div class="text-center mb-6">
-                <h1 class="text-3xl font-bold text-gray-800">Hexacomm Research Group</h1>
-                <p class="text-gray-500 text-sm mt-2">Silahkan login.</p>
-            </div>
+    <div id="loginSection" class="flex-grow flex items-center justify-center p-4"> <!-- MENGHAPUS bg-gray-900 agar mewarisi #ffffff -->
+        <div class="w-full max-w-sm md:max-w-4xl lg:max-w-5xl flex rounded-2xl shadow-2xl overflow-hidden">
             
-            <form id="loginForm" class="space-y-4">
-                <div>
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="username">Username</label>
-                    <input type="text" id="username" placeholder="Masukkan username" required
-                        class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500">
+            <!-- Left Side: Visual/Image Placeholder (Sekarang Logo) -->
+            <div id="visual-side" class="hidden md:block md:w-1/2 p-12 relative flex flex-col justify-center items-center">
+                <div class="text-center">
+                    <!-- LOGO DI SINI -->
+                    <img id="loginLogo" 
+                        class="max-w-[150px] h-auto mx-auto mb-4 p-3 shadow-lg object-contain" 
+                        src="" 
+                        alt="Logo Hexacomm.png">
+                    <!-- AKHIR LOGO -->
+
+                    <h2 class="text-3xl font-extrabold mb-2 text-yellow-700">Paper Riset Hexacomm</h2>
+                    <p class="mt-4 leading-relaxed">
+                        Website pemantau paper kalian.
+                    </p>
+                    <div class="mt-8">
+                        <span class="text-sm font-semibold border-b-2 border-yellow-700">#HexaRnd</span>
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="password">Password</label>
-                    <input type="password" id="password" placeholder="Masukkan password" required
-                        class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500">
+            </div>
+
+            <!-- Right Side: Login Form -->
+            <div class="w-full md:w-1/2 bg-white p-8 md:p-10 lg:p-12">
+                <div class="text-center mb-8">
+                    <h1 class="text-3xl font-bold text-gray-800">Masukkan ID Anda</h1>
+                    <p class="text-gray-500 text-sm mt-2">Belum ada? tanya RnD</p>
                 </div>
-                
-                <button type="submit" 
-                    class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 rounded-lg transition duration-300 shadow-md disabled:opacity-50">
-                    Masuk
-                </button>
-            </form>
-            <p id="loginError" class="text-red-500 text-center mt-4 text-sm hidden"></p>
+
+                <form id="loginForm" class="space-y-6">
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="username">Username</label>
+                        <input type="text" id="username" placeholder="Masukkan username" required
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="password">Password</label>
+                        <input type="password" id="password" placeholder="Masukkan password" required
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                    </div>
+                    
+                    <button type="submit" 
+                        class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 rounded-lg transition duration-300 shadow-lg disabled:opacity-50">
+                        Masuk
+                    </button>
+                </form>
+                <p id="loginError" class="text-red-500 text-center mt-6 text-sm hidden"></p>
+            </div>
         </div>
     </div>
 
-    <!-- BAGIAN 2: APLIKASI UTAMA (Disembunyikan Default) -->
-    <div id="appSection" class="hidden p-4 md:p-8">
+    <!-- BAGIAN 2: APLIKASI UTAMA (Diperbarui) -->
+    <div id="appSection" class="hidden p-4 md:p-8"> <!-- Mewarisi background putih dari body -->
         <div class="container mx-auto">
             <div class="flex flex-col md:flex-row justify-between items-center mb-8 border-b-4 border-yellow-600 pb-2">
-                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-800">
-                    Sistem Manajemen Paper
+                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-800 flex items-center space-x-2">
+                    <!-- Logo di Header Aplikasi Utama -->
+                    <img id="headerLogo" 
+                        class="w-8 h-8 mr-2 object-contain" 
+                        src="" 
+                        alt="Logo">
+                    <span class="text-yellow-600">Sistem Manajemen Paper</span>
                 </h1>
-                <button id="logoutButton" class="mt-4 md:mt-0 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition shadow">
-                    Logout
+                <button id="logoutButton" class="mt-4 md:mt-0 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition shadow flex items-center space-x-1">
+                    <i data-lucide="log-out" class="w-4 h-4"></i>
+                    <span>Logout</span>
                 </button>
             </div>
 
             <!-- Form Tambah Paper -->
-            <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg mb-8">
-                <h2 class="text-2xl font-semibold text-yellow-700 mb-4">Tambah Paper Baru</h2>
+            <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg mb-8 border-t-4 border-yellow-500">
+                <h2 class="text-2xl font-semibold text-yellow-700 mb-4 flex items-center space-x-2">
+                    <i data-lucide="book-plus" class="w-6 h-6"></i>
+                    <span>Tambah Paper Baru</span>
+                </h2>
                 <form id="paperForm" class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <input type="text" id="title" placeholder="Judul Paper (Wajib)" required
-                           class="col-span-1 md:col-span-2 p-3 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
+                               class="col-span-1 md:col-span-2 p-3 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
                     <input type="text" id="authors" placeholder="Nama Penulis (Pisahkan dengan koma)"
-                           class="p-3 border border-gray-300 rounded-lg">
+                               class="p-3 border border-gray-300 rounded-lg">
                     <select id="status" required
-                            class="p-3 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
+                                 class="p-3 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
                         <option value="" disabled selected>Pilih Status</option>
                         <option value="Draft">Draft</option>
                         <option value="Submitted">Submitted</option>
@@ -89,19 +136,20 @@
                         <option value="Rejected">Rejected</option>
                     </select>
                     <input type="text" id="category" placeholder="Kategori (Jurnal/Konferensi/Lainnya)"
-                           class="p-3 border border-gray-300 rounded-lg">
+                               class="p-3 border border-gray-300 rounded-lg">
                     <input type="date" id="deadline" placeholder="Deadline"
-                           class="p-3 border border-gray-300 rounded-lg">
+                               class="p-3 border border-gray-300 rounded-lg">
                     <input type="url" id="reference_link" placeholder="Link Referensi (URL)"
-                           class="p-3 border border-gray-300 rounded-lg">
+                               class="p-3 border border-gray-300 rounded-lg">
                     <input type="url" id="overleaf_link" placeholder="Link Overleaf (URL)"
-                           class="p-3 border border-gray-300 rounded-lg">
+                               class="p-3 border border-gray-300 rounded-lg">
                     <input type="url" id="ppt_link" placeholder="Link PPT/Slide (URL)"
-                           class="p-3 border border-gray-300 rounded-lg">
+                               class="p-3 border border-gray-300 rounded-lg">
                     
+                    <!-- TOMBOL SUBMIT DENGAN VISUAL YANG DIPERBARUI -->
                     <button type="submit" id="submitButton"
-                            class="col-span-1 md:col-span-3 bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-3 px-6 rounded-lg transition duration-300 shadow-md hover:shadow-lg disabled:opacity-50">
-                        Tambah Paper
+                                class="col-span-1 md:col-span-3 bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 px-6 rounded-xl transition duration-300 shadow-xl shadow-yellow-400/50 hover:shadow-2xl hover:shadow-yellow-500/70 disabled:opacity-50 flex items-center justify-center space-x-2">
+                        <!-- Konten diisi oleh JS -->
                     </button>
                     <p id="formMessage" class="col-span-3 text-sm text-center hidden"></p>
                 </form>
@@ -109,11 +157,14 @@
 
             <!-- Bagian Pencarian dan Daftar Paper -->
             <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
-                <h2 class="text-2xl font-semibold text-yellow-700 mb-4">Daftar Paper</h2>
+                <h2 class="text-2xl font-semibold text-yellow-700 mb-4 flex items-center space-x-2">
+                    <i data-lucide="list-checks" class="w-6 h-6"></i>
+                    <span>Daftar Paper</span>
+                </h2>
                 
                 <!-- Input Pencarian -->
                 <input type="text" id="search" placeholder="Cari berdasarkan Judul atau Penulis..."
-                       class="w-full p-3 mb-6 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
+                               class="w-full p-3 mb-6 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
 
                 <!-- Tabel Paper -->
                 <div class="overflow-x-auto">
@@ -135,8 +186,7 @@
                             </tr>
                         </tbody>
                     </table>
-                </div>
-                 <p id="noDataMessage" class="hidden p-4 text-center text-gray-500 mt-4">Tidak ada paper yang ditemukan.</p>
+                       <p id="noDataMessage" class="hidden p-4 text-center text-gray-500 mt-4">Tidak ada paper yang ditemukan.</p>
             </div>
         </div>
     </div>
@@ -147,10 +197,19 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <script>
+        // --- KONFIGURASI ASET ---
+        // URL GITHUB RAW (MENTAH) DARI LOGO ANDA
+        const LOGO_URL = 'https://raw.githubusercontent.com/fitrasadli/pantaupaper/main/Logo%20Hexacomm.png'; 
+
         // --- KONFIGURASI SUPABASE ---
         const SUPABASE_URL = 'https://lkldrnughtjtwlbnzrup.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_P3m8csALCDa3-tJvoLhIBQ_AD_UkmDV';
         const TABLE_NAME = 'papers';
+
+        // NOTE: Untuk fungsionalitas login yang sebenarnya, Anda harus menggunakan Supabase Auth 
+        // dengan email/password atau provider Oauth. 
+        // Implementasi ini hanya menggunakan skema 'users' dan 'password' yang sudah ada
+        // untuk tujuan simulasi di lingkungan tanpa Firebase.
 
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -161,6 +220,10 @@
         const loginForm = document.getElementById('loginForm');
         const loginError = document.getElementById('loginError');
         const logoutButton = document.getElementById('logoutButton');
+
+        // Logo Elements
+        const loginLogo = document.getElementById('loginLogo');
+        const headerLogo = document.getElementById('headerLogo');
 
         // App Elements
         const papersList = document.getElementById('papersList');
@@ -173,8 +236,16 @@
 
         // --- LOGIKA LOGIN ---
 
+        // Fungsi untuk mengatur URL logo
+        function setLogos() {
+            loginLogo.src = LOGO_URL;
+            // Gunakan logo yang sama atau versi yang berbeda untuk header
+            headerLogo.src = LOGO_URL; 
+        }
+
         // Cek sesi saat halaman dimuat
         function checkSession() {
+            setLogos(); // Atur logo saat pertama kali dimuat
             const isLoggedIn = sessionStorage.getItem('isLoggedIn');
             if (isLoggedIn === 'true') {
                 showApp();
@@ -186,14 +257,15 @@
         function showLogin() {
             loginSection.classList.remove('hidden');
             appSection.classList.add('hidden');
-            document.body.classList.remove('bg-gray-50'); // Optional styling reset
+            // Hanya menghapus kelas gelap jika ada, membiarkan CSS default berlaku
+            document.body.classList.remove('bg-gray-900'); 
         }
 
         function showApp() {
             loginSection.classList.add('hidden');
             appSection.classList.remove('hidden');
-            // Muat data paper HANYA jika sudah login
-            fetchPapers();
+            // Hanya menghapus kelas gelap jika ada, membiarkan CSS default (#ffffff) berlaku
+            document.body.classList.remove('bg-gray-900');
         }
 
         // Event Listener Login yang Diperbarui (Menggunakan Database)
@@ -211,7 +283,8 @@
 
             try {
                 // Query ke tabel 'users' di Supabase
-                // PENTING: Tabel 'users' harus sudah dibuat di Supabase
+                // PENTING: Tabel 'users' harus sudah dibuat di Supabase dengan kolom 'username' dan 'password'
+                // serta data user untuk login.
                 const { data, error } = await supabaseClient
                     .from('users')
                     .select('*')
@@ -236,11 +309,13 @@
                 // Menangani pesan error
                 let errorMessage = "Terjadi kesalahan saat login.";
                 if (err.message) {
-                   if (err.message.includes('relation "users" does not exist')) {
-                        errorMessage = "Error: Tabel 'users' belum dibuat di database.";
-                   } else {
+                    if (err.message.includes('relation "users" does not exist')) {
+                        errorMessage = "Error: Tabel 'users' belum dibuat di database. Silakan buat tabel users dengan kolom username dan password.";
+                    } else if (err.message.includes('Username atau Password salah')) {
                         errorMessage = err.message;
-                   }
+                    } else {
+                        errorMessage = "Terjadi kesalahan koneksi. Periksa konsol untuk detail.";
+                    }
                 }
                 loginError.textContent = errorMessage;
                 loginError.classList.remove('hidden');
@@ -256,30 +331,47 @@
         });
 
         // --- LOGIKA APLIKASI (PAPER) ---
-
-        function getStatusBadge(status) {
-            let color = '';
-            switch (status) {
-                case 'Draft': color = 'bg-yellow-100 text-yellow-800'; break;
-                case 'Submitted': color = 'bg-blue-100 text-blue-800'; break;
-                case 'Under Review': color = 'bg-purple-100 text-purple-800'; break;
-                case 'Accepted': color = 'bg-green-100 text-green-800'; break;
-                case 'Rejected': color = 'bg-red-100 text-red-800'; break;
-                default: color = 'bg-gray-100 text-gray-800';
-            }
-            return `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${color}">${status}</span>`;
+        
+        // Helper function for Submit Button content
+        function renderSubmitButton(text, icon = 'file-plus') {
+            const spinClass = icon === 'loader-circle' ? 'animate-spin-fast' : '';
+            return `<i data-lucide="${icon}" class="w-5 h-5 mr-2 ${spinClass}"></i> <span>${text}</span>`;
         }
 
+        // FUNGSI GET STATUS BADGE DENGAN IKON BARU
+        function getStatusBadge(status) {
+            let color = '';
+            let icon = '';
+            switch (status) {
+                case 'Draft': color = 'bg-yellow-100 text-yellow-800 border border-yellow-300'; icon = 'pencil'; break;
+                case 'Submitted': color = 'bg-blue-100 text-blue-800 border border-blue-300'; icon = 'send'; break;
+                case 'Under Review': color = 'bg-purple-100 text-purple-800 border border-purple-300'; icon = 'search'; break;
+                case 'Accepted': color = 'bg-green-100 text-green-800 border border-green-300'; icon = 'check-circle'; break;
+                case 'Rejected': color = 'bg-red-100 text-red-800 border border-red-300'; icon = 'x-circle'; break;
+                default: color = 'bg-gray-100 text-gray-800 border border-gray-300'; icon = 'file';
+            }
+            return `
+                <span class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full items-center space-x-1 ${color}">
+                    <i data-lucide="${icon}" class="w-3 h-3"></i>
+                    <span>${status}</span>
+                </span>
+            `;
+        }
+        
+        // FUNGSI PAPER ROW DENGAN TAUTAN IKON BARU
         function createPaperRow(paper) {
             const deadlineDate = paper.deadline ? new Date(paper.deadline).toLocaleDateString('id-ID') : '-';
 
+            // Ikon Tautan yang Diperbarui
             const linkIcon = (url, iconName, label) => {
                 if (!url) return '';
+                // Ensure URL starts with http:// or https:// for valid link
+                const safeUrl = url.startsWith('http') ? url : `https://${url}`;
                 return `
-                    <a href="${url}" target="_blank" rel="noopener noreferrer" 
-                       class="text-gray-500 hover:text-yellow-600 transition duration-150 mx-0.5" 
-                       title="${label}">
-                        <i data-lucide="${iconName}" class="w-5 h-5"></i>
+                    <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" 
+                        class="p-1 rounded-full border border-yellow-200 bg-yellow-50 text-yellow-600 hover:bg-yellow-200 hover:border-yellow-400 transition duration-200 shadow-sm" 
+                        title="${label}">
+                        <i data-lucide="${iconName}" class="w-4 h-4"></i>
                     </a>
                 `;
             };
@@ -305,9 +397,17 @@
         }
         
         async function fetchPapers(searchTerm = '') {
-            loadingRow.classList.remove('hidden');
-            papersList.innerHTML = '';
+            // Sembunyikan pesan 'Tidak ada data' saat memulai pencarian/memuat
             noDataMessage.classList.add('hidden');
+            
+            // Tampilkan baris loading di dalam tbody
+            papersList.innerHTML = `
+                <tr id="loadingRow">
+                    <td colspan="6" class="p-4 text-center text-gray-500">Memuat data...</td>
+                </tr>
+            `;
+            // Inisialisasi Lucide untuk memastikan ikon loading terlihat
+            lucide.createIcons();
 
             try {
                 let query = supabaseClient.from(TABLE_NAME)
@@ -315,6 +415,7 @@
                     .order('created_at', { ascending: false });
 
                 if (searchTerm) {
+                    // Menggunakan operator 'or' untuk mencari di dua kolom
                     const searchPattern = `%${searchTerm.toLowerCase()}%`;
                     query = query.or(`title.ilike.${searchPattern},authors.ilike.${searchPattern}`);
                 }
@@ -328,7 +429,8 @@
                     data.forEach(paper => {
                         papersList.insertAdjacentHTML('beforeend', createPaperRow(paper));
                     });
-                    lucide.createIcons();
+                    // Inisialisasi Lucide Icons setelah data dimuat
+                    lucide.createIcons(); 
                 } else {
                     noDataMessage.classList.remove('hidden');
                 }
@@ -336,8 +438,6 @@
             } catch (error) {
                 console.error('Error fetching papers:', error.message);
                 papersList.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-red-500">Gagal memuat data: ${error.message}</td></tr>`;
-            } finally {
-                loadingRow.classList.add('hidden');
             }
         }
 
@@ -361,7 +461,8 @@
             }
 
             submitButton.disabled = true;
-            submitButton.textContent = 'Menyimpan...';
+            submitButton.innerHTML = renderSubmitButton('Menyimpan...', 'loader-circle');
+            lucide.createIcons();
 
             try {
                 const { error } = await supabaseClient.from(TABLE_NAME).insert([newPaper]);
@@ -370,6 +471,7 @@
 
                 paperForm.reset();
                 showMessage('Paper berhasil ditambahkan!', 'text-green-500');
+                // Muat ulang daftar dengan filter pencarian yang mungkin aktif
                 fetchPapers(searchInput.value);
 
             } catch (error) {
@@ -377,13 +479,14 @@
                 showMessage(`Gagal menambahkan paper: ${error.message}`, 'text-red-500');
             } finally {
                 submitButton.disabled = false;
-                submitButton.textContent = 'Tambah Paper';
+                submitButton.innerHTML = renderSubmitButton('Tambah Paper', 'file-plus');
+                lucide.createIcons();
             }
         }
 
         function showMessage(message, colorClass) {
             formMessage.textContent = message;
-            formMessage.className = `col-span-3 text-sm text-center ${colorClass}`;
+            formMessage.className = `col-span-3 text-sm text-center font-semibold ${colorClass}`;
             formMessage.classList.remove('hidden');
             setTimeout(() => {
                 formMessage.classList.add('hidden');
@@ -405,8 +508,9 @@
         // --- INISIALISASI ---
 
         document.addEventListener('DOMContentLoaded', () => {
-            // Ganti pemanggilan langsung fetchPapers dengan pengecekan sesi login
             checkSession();
+            // Panggil lucide.createIcons() secara global untuk menginisialisasi semua ikon statis
+            lucide.createIcons(); 
         });
 
     </script>
