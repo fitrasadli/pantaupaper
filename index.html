@@ -63,6 +63,14 @@
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
             position: relative;
         }
+
+        /* CSS BARU UNTUK TRANSISI HALUS */
+        .sortable-header {
+            transition: background-color 0.2s ease-in-out;
+        }
+        .sort-icon-wrapper i {
+            transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -196,11 +204,32 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Judul</th>
-                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Penulis</th>
-                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Kategori</th>
-                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Deadline</th>
+                                <!-- DIBUNGKUS DENGAN DIV FLEX UNTUK ALIGNMENT HORIZONTAL -->
+                                <th onclick="handleHeaderSortClick('title')" data-sort-key="title" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 sortable-header">
+                                    <div class="flex items-center space-x-1">
+                                        <span>Judul</span> <span class="sort-icon-wrapper" data-col="title"></span>
+                                    </div>
+                                </th>
+                                <th onclick="handleHeaderSortClick('authors')" data-sort-key="authors" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 sortable-header">
+                                    <div class="flex items-center space-x-1">
+                                        <span>Penulis</span> <span class="sort-icon-wrapper" data-col="authors"></span>
+                                    </div>
+                                </th>
+                                <th onclick="handleHeaderSortClick('status')" data-sort-key="status" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 sortable-header">
+                                    <div class="flex items-center space-x-1">
+                                        <span>Status</span> <span class="sort-icon-wrapper" data-col="status"></span>
+                                    </div>
+                                </th>
+                                <th onclick="handleHeaderSortClick('category')" data-sort-key="category" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell cursor-pointer hover:bg-gray-100 sortable-header">
+                                    <div class="flex items-center space-x-1">
+                                        <span>Kategori</span> <span class="sort-icon-wrapper" data-col="category"></span>
+                                    </div>
+                                </th>
+                                <th onclick="handleHeaderSortClick('deadline')" data-sort-key="deadline" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell cursor-pointer hover:bg-gray-100 sortable-header">
+                                    <div class="flex items-center space-x-1">
+                                        <span>Deadline</span> <span class="sort-icon-wrapper" data-col="deadline"></span>
+                                    </div>
+                                </th>
                                 <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                             </tr>
                         </thead>
@@ -216,7 +245,7 @@
         </div>
     </div>
 
-    <!-- BAGIAN 3: MODAL EDIT PAPER (BARU) -->
+    <!-- BAGIAN 3: MODAL EDIT PAPER -->
     <div id="editModal" class="modal-overlay hidden">
         <div class="modal-content">
             <h3 class="text-2xl font-bold text-yellow-700 mb-4 flex items-center space-x-2 border-b pb-2">
@@ -342,7 +371,52 @@
         const editFormMessage = document.getElementById('editFormMessage');
         const saveEditButton = document.getElementById('saveEditButton');
 
+        // Status Sorting Global (Diubah untuk kompatibilitas header)
+        let currentSortCol = 'created_at'; // Default sort kolom: Tanggal Ditambahkan
+        let currentSortOrder = 'desc'; // Default sort order: Descending (Terbaru)
+        
+        // Mapping kolom ke tampilan UI
+        const sortableColumns = ['title', 'authors', 'status', 'category', 'deadline'];
 
+        // --- LOGIKA SORTING HEADER BARU ---
+        
+        function updateTableHeaders() {
+            // Hapus semua ikon sort sebelumnya
+            document.querySelectorAll('.sort-icon-wrapper').forEach(wrapper => {
+                wrapper.innerHTML = '';
+            });
+
+            // Tentukan ikon berdasarkan urutan saat ini
+            const icon = currentSortOrder === 'asc' ? 'arrow-up' : 'arrow-down';
+            
+            // Cari wrapper ikon untuk kolom yang sedang aktif
+            const activeWrapper = document.querySelector(`.sort-icon-wrapper[data-col="${currentSortCol}"]`);
+            if (activeWrapper) {
+                // Tambahkan ikon baru
+                activeWrapper.innerHTML = `<i data-lucide="${icon}" class="w-3 h-3 text-yellow-600"></i>`;
+                // Render ikon
+                lucide.createIcons();
+            }
+        }
+
+        window.handleHeaderSortClick = (column) => {
+            // Jika mengklik kolom yang sama, balikkan urutan
+            if (currentSortCol === column) {
+                currentSortOrder = currentSortOrder === 'asc' ? 'desc' : 'asc';
+            } else {
+                // Jika mengklik kolom baru, ubah kolom dan set default order ke ascending
+                // NOTE: Mengubah default ke 'asc' atau 'desc' tergantung preferensi, tapi 'asc' lebih umum untuk kolom baru.
+                currentSortCol = column;
+                currentSortOrder = 'asc'; 
+            }
+
+            // Muat ulang data dengan parameter sorting yang baru
+            fetchPapers(searchInput.value);
+            
+            // Perbarui ikon header secara visual (akan dipanggil lagi di fetchPapers, tapi ini untuk immediate feedback)
+            updateTableHeaders();
+        };
+        
         // --- LOGIKA LOGIN ---
 
         // Fungsi untuk mengatur URL logo
@@ -524,6 +598,10 @@
         async function fetchPapers(searchTerm = '') {
             noDataMessage.classList.add('hidden');
             
+            // Tentukan parameter sorting
+            const sortBy = currentSortCol;
+            const isAscending = currentSortOrder === 'asc'; // Supabase menggunakan boolean ascending
+
             // Tampilkan baris loading di dalam tbody
             papersList.innerHTML = `
                 <tr id="loadingRow">
@@ -531,15 +609,19 @@
                         <i data-lucide="loader-circle" class="w-5 h-5 mr-2 animate-spin-fast"></i>
                         Memuat data...
                     </td>
+                </div>
                 </tr>
             `;
             // Inisialisasi Lucide untuk memastikan ikon loading terlihat
             lucide.createIcons();
+            // Perbarui ikon header sorting
+            updateTableHeaders();
 
             try {
                 let query = supabaseClient.from(TABLE_NAME)
                     .select('*')
-                    .order('created_at', { ascending: false });
+                    // Terapkan Sorting
+                    .order(sortBy, { ascending: isAscending }); 
 
                 if (searchTerm) {
                     // Menggunakan operator 'or' untuk mencari di dua kolom
