@@ -13,6 +13,9 @@
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f7f9fb;
+            min-height: 100vh; /* Memastikan body mengambil seluruh tinggi viewport */
+            display: flex;
+            flex-direction: column;
         }
         
         .container {
@@ -128,13 +131,29 @@
             padding: 2rem;
             box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.03);
         }
+
+        /* PERBAIKAN CENTERING LOGIN */
+        #loginSection {
+            min-height: 100vh; /* Memastikan div ini setinggi viewport */
+            /* Tailwind classes flex items-center justify-center sudah di HTML,
+               tetapi kita pastikan tidak ada margin/padding yang mengganggu
+               di body/global container */
+            padding: 0; /* Hapus padding p-4 jika ada di HTML, biarkan padding di dalam login form */
+        }
+        #loginSection > div {
+             /* Pastikan kartu login utama memiliki batasan max-width yang disetel di HTML */
+             margin-top: 2rem;
+             margin-bottom: 2rem;
+        }
+        
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
 
     <!-- BAGIAN 1: LOGIN SECTION -->
-    <div id="loginSection" class="flex-grow flex items-center justify-center p-4">
-        <div class="w-full max-w-sm md:max-w-4xl lg:max-w-5xl flex rounded-2xl shadow-2xl overflow-hidden">
+    <!-- Menghapus p-4 di HTML agar centering body 100% vertikal lebih mudah -->
+    <div id="loginSection" class="flex-grow flex items-center justify-center">
+        <div class="w-full max-w-sm md:max-w-4xl lg:max-w-5xl flex rounded-2xl shadow-2xl overflow-hidden mx-4">
             
             <!-- Left Side: Visual/Logo -->
             <div id="visual-side" class="hidden md:block md:w-1/2 p-12 relative flex flex-col justify-center items-center">
