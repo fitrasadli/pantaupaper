@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manajemen Paper & Materi Akademik</title>
+    <title>Manajemen Paper & Materi Hexacomm</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -375,7 +375,10 @@
                                 <input type="date" id="tanggal_jadi" placeholder="Tanggal Jadi"
                                     class="p-3 border border-gray-300 rounded-lg">
                                 <input type="url" id="link_materi" placeholder="Link Materi (URL Wajib)" required
-                                    class="col-span-1 md:col-span-2 p-3 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
+                                    class="p-3 border border-gray-300 rounded-lg">
+                                <!-- INPUT BARU UNTUK LINK PPT -->
+                                <input type="url" id="ppt_link_materi" placeholder="Link PPT/Slide (Opsional)"
+                                    class="p-3 border border-gray-300 rounded-lg">
                                 
                                 <button type="submit" id="submitMateriButton"
                                     class="col-span-1 md:col-span-3 bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 px-6 rounded-xl transition duration-300 shadow-xl shadow-yellow-400/50 hover:shadow-2xl hover:shadow-yellow-500/70 disabled:opacity-50 flex items-center justify-center space-x-2">
@@ -548,6 +551,12 @@
                 <div>
                     <label class="block text-gray-700 text-sm font-bold mb-1" for="edit-link_materi">Link Materi (Wajib)</label>
                     <input type="url" id="edit-link_materi" placeholder="Link Materi (URL)" required
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
+                </div>
+                 <!-- Link PPT/Slide (Full width) - BARU -->
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-1" for="edit-ppt_link_materi">Link PPT/Slide</label>
+                    <input type="url" id="edit-ppt_link_materi" placeholder="Link PPT/Slide (URL)"
                         class="w-full p-3 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
                 </div>
 
@@ -989,6 +998,8 @@
                 if (document.getElementById('edit-pembuat')) document.getElementById('edit-pembuat').value = data.pembuat || '';
                 if (document.getElementById('edit-tanggal_jadi')) document.getElementById('edit-tanggal_jadi').value = data.tanggal_jadi ? data.tanggal_jadi.split('T')[0] : '';
                 if (document.getElementById('edit-link_materi')) document.getElementById('edit-link_materi').value = data.link_materi || '';
+                // BARU: Tambahkan Link PPT Materi
+                if (document.getElementById('edit-ppt_link_materi')) document.getElementById('edit-ppt_link_materi').value = data.ppt_link_materi || '';
                 
                 if (editFormMateriMessage) editFormMateriMessage.classList.add('hidden');
                 if (editMateriModal) editMateriModal.classList.remove('hidden');
@@ -1060,6 +1071,24 @@
             const badgeColor = materi.divisi === '5G' ? 'bg-indigo-100 text-indigo-800' : 
                                materi.divisi === 'IoT' ? 'bg-cyan-100 text-cyan-800' : 'bg-gray-100 text-gray-800';
 
+            // Helper untuk ikon tautan materi
+            const linkIcon = (url, iconName, label) => {
+                if (!url) return '';
+                const safeUrl = url.startsWith('http') || url.startsWith('https') ? url : `https://${url}`;
+                return `
+                    <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" 
+                        class="p-1 rounded-full border border-yellow-200 bg-yellow-50 text-yellow-600 hover:bg-yellow-200 hover:border-yellow-400 transition duration-200 shadow-sm" 
+                        title="${label}">
+                        <i data-lucide="${iconName}" class="w-4 h-4"></i>
+                    </a>
+                `;
+            };
+
+            const links = `
+                ${linkIcon(materi.link_materi, 'link', 'Link Materi Utama')}
+                ${linkIcon(materi.ppt_link_materi, 'monitor', 'Link PPT/Slide')}
+            `;
+
             return `
                 <tr class="hover:bg-yellow-50 transition duration-150">
                     <td class="px-3 py-4 whitespace-normal text-sm font-medium text-gray-900">${materi.judul_materi}</td>
@@ -1071,11 +1100,7 @@
                     <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500 hidden sm:table-cell">${materi.pembuat || '-'}</td>
                     <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500 hidden sm:table-cell">${tanggalJadi}</td>
                     <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-700 flex space-x-1 items-center">
-                        <a href="${materi.link_materi}" target="_blank" rel="noopener noreferrer" 
-                            class="p-1 rounded-full border border-yellow-200 bg-yellow-50 text-yellow-600 hover:bg-yellow-200 hover:border-yellow-400 transition duration-200 shadow-sm" 
-                            title="Akses Materi">
-                            <i data-lucide="link" class="w-4 h-4"></i>
-                        </a>
+                        ${links}
                         <button onclick='openEditModal("materi", ${materiJson})'
                             class="p-1 rounded-full border border-blue-200 bg-blue-50 text-blue-600 hover:bg-blue-200 hover:border-blue-400 transition duration-200 shadow-sm" 
                             title="Edit Materi">
@@ -1108,8 +1133,9 @@
             updateTableHeaders('materi');
 
             try {
+                // Perhatikan: Kolom ppt_link_materi harus ditambahkan ke tabel materi di Supabase agar ini berfungsi
                 let query = supabaseClient.from(TABLE_NAME_MATERI)
-                    .select('*')
+                    .select('*, ppt_link_materi') 
                     .order(state.col, { ascending: state.order === 'asc' });
 
                 if (searchTerm) {
@@ -1152,10 +1178,12 @@
                 pembuat: document.getElementById('pembuat').value.trim() || null,
                 tanggal_jadi: document.getElementById('tanggal_jadi').value || null,
                 link_materi: document.getElementById('link_materi').value.trim(),
+                // BARU: Link PPT
+                ppt_link_materi: document.getElementById('ppt_link_materi').value.trim() || null,
             };
 
             if (!newMateri.divisi || !newMateri.judul_materi || !newMateri.link_materi) {
-                showMessage(formMateriMessage, 'Divisi, Judul, dan Link Materi wajib diisi!', 'text-red-500');
+                showMessage(formMateriMessage, 'Divisi, Judul, dan Link Materi Utama wajib diisi!', 'text-red-500');
                 return;
             }
             
@@ -1164,6 +1192,7 @@
             lucide.createIcons();
 
             try {
+                // Pastikan kolom ppt_link_materi ada di tabel materi
                 const { error } = await supabaseClient.from(TABLE_NAME_MATERI).insert([newMateri]);
 
                 if (error) throw error;
@@ -1197,6 +1226,8 @@
                 pembuat: document.getElementById('edit-pembuat').value.trim() || null,
                 tanggal_jadi: document.getElementById('edit-tanggal_jadi').value || null,
                 link_materi: document.getElementById('edit-link_materi').value.trim(),
+                // BARU: Link PPT Materi
+                ppt_link_materi: document.getElementById('edit-ppt_link_materi').value.trim() || null,
             };
 
             if (!updatedMateri.divisi || !updatedMateri.judul_materi || !updatedMateri.link_materi) {
