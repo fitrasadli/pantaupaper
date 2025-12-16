@@ -10,7 +10,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
         body {
             font-family: 'Inter', sans-serif;
-            /* Default background for app section - DIJADIKAN PUTIH */
+            /* Default background for app section - PUTIH */
             background-color: #ffffff;
         }
         .container {
@@ -27,7 +27,7 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
         }
-        /* Style for the visual side - GRADIENT DIJADIKAN SANGAT LEMBUT/PUTIH */
+        /* Style for the visual side - SANGAT LEMBUT/PUTIH */
         #visual-side {
             background: linear-gradient(135deg, #fffcf5, #ffffff); /* Soft Yellowish White ke Pure White */
             color: #4b5563; /* Warna teks dipertahankan */
@@ -205,11 +205,7 @@
         const SUPABASE_URL = 'https://lkldrnughtjtwlbnzrup.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_P3m8csALCDa3-tJvoLhIBQ_AD_UkmDV';
         const TABLE_NAME = 'papers';
-
-        // NOTE: Untuk fungsionalitas login yang sebenarnya, Anda harus menggunakan Supabase Auth 
-        // dengan email/password atau provider Oauth. 
-        // Implementasi ini hanya menggunakan skema 'users' dan 'password' yang sudah ada
-        // untuk tujuan simulasi di lingkungan tanpa Firebase.
+        const USER_TABLE_NAME = 'users';
 
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -229,7 +225,6 @@
         const papersList = document.getElementById('papersList');
         const paperForm = document.getElementById('paperForm');
         const searchInput = document.getElementById('search');
-        const loadingRow = document.getElementById('loadingRow');
         const noDataMessage = document.getElementById('noDataMessage');
         const formMessage = document.getElementById('formMessage');
         const submitButton = document.getElementById('submitButton');
@@ -249,6 +244,8 @@
             const isLoggedIn = sessionStorage.getItem('isLoggedIn');
             if (isLoggedIn === 'true') {
                 showApp();
+                // FIX 2a: Panggil fetchPapers saat sesi ditemukan (page refresh)
+                fetchPapers(); 
             } else {
                 showLogin();
             }
@@ -300,6 +297,8 @@
                     // Login Sukses
                     sessionStorage.setItem('isLoggedIn', 'true');
                     showApp();
+                    // FIX 2b: Panggil fetchPapers setelah login sukses
+                    fetchPapers(); 
                 } else {
                     // Login Gagal (User tidak ditemukan atau password salah)
                     throw new Error("Username atau Password salah!");
@@ -403,7 +402,10 @@
             // Tampilkan baris loading di dalam tbody
             papersList.innerHTML = `
                 <tr id="loadingRow">
-                    <td colspan="6" class="p-4 text-center text-gray-500">Memuat data...</td>
+                    <td colspan="6" class="p-4 text-center text-gray-500 flex items-center justify-center">
+                        <i data-lucide="loader-circle" class="w-5 h-5 mr-2 animate-spin-fast"></i>
+                        Memuat data...
+                    </td>
                 </tr>
             `;
             // Inisialisasi Lucide untuk memastikan ikon loading terlihat
@@ -422,7 +424,15 @@
 
                 const { data, error } = await query;
 
-                if (error) throw error;
+                if (error) {
+                    // Tampilkan pesan error RLS/koneksi
+                    let errorMessage = error.message.includes('permission denied')
+                        ? `Akses Ditolak (RLS Error). Mohon periksa kebijakan Row-Level Security (RLS) di tabel '${TABLE_NAME}' Supabase.`
+                        : `Gagal memuat data: ${error.message}. (Cek Konsol)`;
+                    
+                    papersList.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-red-500 font-bold">${errorMessage}</td></tr>`;
+                    throw error;
+                }
 
                 papersList.innerHTML = '';
                 if (data && data.length > 0) {
@@ -436,8 +446,8 @@
                 }
 
             } catch (error) {
-                console.error('Error fetching papers:', error.message);
-                papersList.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-red-500">Gagal memuat data: ${error.message}</td></tr>`;
+                // Jangan lakukan apa-apa di sini karena error sudah ditampilkan di blok try
+                console.error('Final fetching error (logged):', error.message);
             }
         }
 
@@ -446,7 +456,7 @@
 
             const newPaper = {
                 title: document.getElementById('title').value.trim(),
-                authors: document.getElementById('authors').value.trim(),
+                authors: document.getElementById('authors').value.trim() || null,
                 status: document.getElementById('status').value,
                 category: document.getElementById('category').value.trim() || null,
                 deadline: document.getElementById('deadline').value || null,
@@ -476,7 +486,10 @@
 
             } catch (error) {
                 console.error('Error adding paper:', error.message);
-                showMessage(`Gagal menambahkan paper: ${error.message}`, 'text-red-500');
+                let errorMessage = error.message.includes('permission denied')
+                    ? `Gagal menambahkan paper: Akses Ditolak (RLS Error). Mohon cek kebijakan INSERT di Supabase.`
+                    : `Gagal menambahkan paper: ${error.message}`;
+                showMessage(errorMessage, 'text-red-500');
             } finally {
                 submitButton.disabled = false;
                 submitButton.innerHTML = renderSubmitButton('Tambah Paper', 'file-plus');
@@ -490,7 +503,7 @@
             formMessage.classList.remove('hidden');
             setTimeout(() => {
                 formMessage.classList.add('hidden');
-            }, 3000);
+            }, 4000);
         }
 
         // --- EVENT LISTENERS ---
@@ -502,14 +515,16 @@
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(() => {
                 fetchPapers(searchInput.value);
-            }, 300);
+            }, 300); // Debounce 300ms
         });
 
         // --- INISIALISASI ---
 
         document.addEventListener('DOMContentLoaded', () => {
+            // FIX 1: Set status awal tombol submit
+            submitButton.innerHTML = renderSubmitButton('Tambah Paper', 'file-plus');
+            
             checkSession();
-            // Panggil lucide.createIcons() secara global untuk menginisialisasi semua ikon statis
             lucide.createIcons(); 
         });
 
