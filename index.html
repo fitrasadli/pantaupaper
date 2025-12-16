@@ -40,30 +40,54 @@
         .animate-spin-fast {
           animation: spin 0.5s linear infinite;
         }
+
+        /* Gaya untuk Modal (Jendela Pop-up) */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            max-width: 90%;
+            width: 500px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
     </style>
 </head>
-<body class="min-h-screen flex flex-col"> <!-- Menghapus kelas bg-gray-100 agar CSS internal berlaku -->
+<body class="min-h-screen flex flex-col">
 
     <!-- BAGIAN 1: LOGIN SECTION -->
-    <div id="loginSection" class="flex-grow flex items-center justify-center p-4"> <!-- MENGHAPUS bg-gray-900 agar mewarisi #ffffff -->
+    <div id="loginSection" class="flex-grow flex items-center justify-center p-4">
         <div class="w-full max-w-sm md:max-w-4xl lg:max-w-5xl flex rounded-2xl shadow-2xl overflow-hidden">
             
-            <!-- Left Side: Visual/Image Placeholder (Sekarang Logo) -->
+            <!-- Left Side: Visual/Logo -->
             <div id="visual-side" class="hidden md:block md:w-1/2 p-12 relative flex flex-col justify-center items-center">
                 <div class="text-center">
                     <!-- LOGO DI SINI -->
                     <img id="loginLogo" 
-                        class="max-w-[150px] h-auto mx-auto mb-4 p-3 object-contain" 
+                        class="max-w-[150px] h-auto mx-auto mb-4 p-3 rounded-xl shadow-lg object-contain border border-yellow-100" 
                         src="" 
-                        alt="Logo Hexacomm.png">
+                        alt="Logo Hexacomm.png"
+                        onerror="this.onerror=null; this.src='https://placehold.co/150x150/fde047/78350f?text=Hexa';">
                     <!-- AKHIR LOGO -->
 
                     <h2 class="text-3xl font-extrabold mb-2 text-yellow-700">Paper Riset Hexacomm</h2>
-                    <p class="mt-4 leading-relaxed">
+                    <p class="mt-4 leading-relaxed text-gray-600">
                         Website pemantau paper kalian.
                     </p>
                     <div class="mt-8">
-                        <span class="text-sm font-semibold border-b-2 border-yellow-700">#HexaRnd</span>
+                        <span class="text-sm font-semibold border-b-2 border-yellow-700 text-yellow-800">#HexaRnd</span>
                     </div>
                 </div>
             </div>
@@ -104,9 +128,10 @@
                 <h1 class="text-3xl md:text-4xl font-extrabold text-gray-800 flex items-center space-x-2">
                     <!-- Logo di Header Aplikasi Utama -->
                     <img id="headerLogo" 
-                        class="w-8 h-8 mr-2 object-contain" 
+                        class="w-8 h-8 mr-2 object-contain rounded-md" 
                         src="" 
-                        alt="Logo">
+                        alt="Logo"
+                        onerror="this.onerror=null; this.src='https://placehold.co/32x32/fde047/78350f?text=H';">
                     <span class="text-yellow-600">Sistem Manajemen Paper</span>
                 </h1>
                 <button id="logoutButton" class="mt-4 md:mt-0 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition shadow flex items-center space-x-1">
@@ -176,7 +201,7 @@
                                 <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                 <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Kategori</th>
                                 <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Deadline</th>
-                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tautan</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                             </tr>
                         </thead>
                         <tbody id="papersList" class="bg-white divide-y divide-gray-200">
@@ -190,6 +215,88 @@
             </div>
         </div>
     </div>
+
+    <!-- BAGIAN 3: MODAL EDIT PAPER (BARU) -->
+    <div id="editModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3 class="text-2xl font-bold text-yellow-700 mb-4 flex items-center space-x-2 border-b pb-2">
+                <i data-lucide="file-edit" class="w-6 h-6"></i>
+                <span>Edit Detail Paper</span>
+            </h3>
+            <button onclick="closeEditModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <form id="editPaperForm" class="space-y-4">
+                <input type="hidden" id="edit-id">
+                
+                <!-- CONTAINER GRID DUA KOLOM -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    
+                    <!-- BARIS 1: Judul Paper (Display) & Deadline -->
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-1">Judul Paper (ID)</label>
+                        <p id="edit-title-display" class="w-full p-3 bg-gray-100 border border-gray-300 rounded-lg font-semibold text-gray-800 truncate"></p>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-1" for="edit-deadline">Deadline</label>
+                        <input type="date" id="edit-deadline"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
+                    </div>
+
+                    <!-- BARIS 2: Penulis & Link Referensi -->
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-1" for="edit-authors">Penulis</label>
+                        <input type="text" id="edit-authors" placeholder="Nama Penulis (Pisahkan dengan koma)"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-1" for="edit-reference_link">Link Referensi</label>
+                        <input type="url" id="edit-reference_link" placeholder="Link Referensi (URL)"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
+                    </div>
+
+                    <!-- BARIS 3: Status & Link Overleaf -->
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-1" for="edit-status">Status (Wajib)</label>
+                        <select id="edit-status" required
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
+                            <option value="Draft">Draft</option>
+                            <option value="Submitted">Submitted</option>
+                            <option value="Under Review">Under Review</option>
+                            <option value="Accepted">Accepted</option>
+                            <option value="Rejected">Rejected</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-1" for="edit-overleaf_link">Link Overleaf</label>
+                        <input type="url" id="edit-overleaf_link" placeholder="Link Overleaf (URL)"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
+                    </div>
+
+                    <!-- BARIS 4: Kategori & Link PPT/Slide -->
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-1" for="edit-category">Kategori</label>
+                        <input type="text" id="edit-category" placeholder="Kategori (Jurnal/Konferensi/Lainnya)"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-1" for="edit-ppt_link">Link PPT/Slide</label>
+                        <input type="url" id="edit-ppt_link" placeholder="Link PPT/Slide (URL)"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
+                    </div>
+                </div>
+
+                <!-- Pesan dan Tombol Aksi (Full width) -->
+                <p id="editFormMessage" class="text-sm text-center font-semibold hidden"></p>
+
+                <button type="submit" id="saveEditButton"
+                    class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-lg transition duration-300 shadow-md disabled:opacity-50 flex items-center justify-center space-x-2">
+                    <i data-lucide="check" class="w-5 h-5"></i> <span>Simpan Perubahan</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
 
     <!-- Supabase Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -228,6 +335,13 @@
         const noDataMessage = document.getElementById('noDataMessage');
         const formMessage = document.getElementById('formMessage');
         const submitButton = document.getElementById('submitButton');
+        
+        // Modal Elements
+        const editModal = document.getElementById('editModal');
+        const editPaperForm = document.getElementById('editPaperForm');
+        const editFormMessage = document.getElementById('editFormMessage');
+        const saveEditButton = document.getElementById('saveEditButton');
+
 
         // --- LOGIKA LOGIN ---
 
@@ -244,7 +358,7 @@
             const isLoggedIn = sessionStorage.getItem('isLoggedIn');
             if (isLoggedIn === 'true') {
                 showApp();
-                // FIX 2a: Panggil fetchPapers saat sesi ditemukan (page refresh)
+                // Panggil fetchPapers saat sesi ditemukan (page refresh)
                 fetchPapers(); 
             } else {
                 showLogin();
@@ -279,15 +393,12 @@
             loginError.classList.add('hidden');
 
             try {
-                // Query ke tabel 'users' di Supabase
-                // PENTING: Tabel 'users' harus sudah dibuat di Supabase dengan kolom 'username' dan 'password'
-                // serta data user untuk login.
                 const { data, error } = await supabaseClient
                     .from('users')
                     .select('*')
                     .eq('username', user)
                     .eq('password', pass)
-                    .maybeSingle(); // Mengambil satu baris atau null
+                    .maybeSingle();
 
                 if (error) {
                     throw error;
@@ -297,7 +408,7 @@
                     // Login Sukses
                     sessionStorage.setItem('isLoggedIn', 'true');
                     showApp();
-                    // FIX 2b: Panggil fetchPapers setelah login sukses
+                    // Panggil fetchPapers setelah login sukses
                     fetchPapers(); 
                 } else {
                     // Login Gagal (User tidak ditemukan atau password salah)
@@ -336,6 +447,12 @@
             const spinClass = icon === 'loader-circle' ? 'animate-spin-fast' : '';
             return `<i data-lucide="${icon}" class="w-5 h-5 mr-2 ${spinClass}"></i> <span>${text}</span>`;
         }
+        
+        // Helper function for Edit Button content
+        function renderSaveButton(text, icon = 'check') {
+            const spinClass = icon === 'loader-circle' ? 'animate-spin-fast' : '';
+            return `<i data-lucide="${icon}" class="w-5 h-5 mr-2 ${spinClass}"></i> <span>${text}</span>`;
+        }
 
         // FUNGSI GET STATUS BADGE DENGAN IKON BARU
         function getStatusBadge(status) {
@@ -357,15 +474,18 @@
             `;
         }
         
-        // FUNGSI PAPER ROW DENGAN TAUTAN IKON BARU
+        // FUNGSI PAPER ROW DENGAN TOMBOL EDIT (Diperbarui)
         function createPaperRow(paper) {
             const deadlineDate = paper.deadline ? new Date(paper.deadline).toLocaleDateString('id-ID') : '-';
 
+            // Mengubah format objek paper menjadi string JSON yang aman untuk di passing ke onclick
+            const paperJson = JSON.stringify(paper).replace(/'/g, "\\'");
+            
             // Ikon Tautan yang Diperbarui
             const linkIcon = (url, iconName, label) => {
                 if (!url) return '';
                 // Ensure URL starts with http:// or https:// for valid link
-                const safeUrl = url.startsWith('http') ? url : `https://${url}`;
+                const safeUrl = url.startsWith('http') || url.startsWith('https') ? url : `https://${url}`;
                 return `
                     <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" 
                         class="p-1 rounded-full border border-yellow-200 bg-yellow-50 text-yellow-600 hover:bg-yellow-200 hover:border-yellow-400 transition duration-200 shadow-sm" 
@@ -390,13 +510,18 @@
                     <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500 hidden sm:table-cell">${deadlineDate}</td>
                     <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-700 flex space-x-1 items-center">
                         ${links}
+                        <!-- TOMBOL EDIT BARU -->
+                        <button onclick='openEditModal(${paperJson})'
+                            class="p-1 rounded-full border border-blue-200 bg-blue-50 text-blue-600 hover:bg-blue-200 hover:border-blue-400 transition duration-200 shadow-sm" 
+                            title="Edit Paper">
+                            <i data-lucide="edit-3" class="w-4 h-4"></i>
+                        </button>
                     </td>
                 </tr>
             `;
         }
         
         async function fetchPapers(searchTerm = '') {
-            // Sembunyikan pesan 'Tidak ada data' saat memulai pencarian/memuat
             noDataMessage.classList.add('hidden');
             
             // Tampilkan baris loading di dalam tbody
@@ -439,7 +564,7 @@
                     data.forEach(paper => {
                         papersList.insertAdjacentHTML('beforeend', createPaperRow(paper));
                     });
-                    // Inisialisasi Lucide Icons setelah data dimuat
+                    // Inisialisasi Lucide Icons setelah data dimuat (termasuk tombol Edit)
                     lucide.createIcons(); 
                 } else {
                     noDataMessage.classList.remove('hidden');
@@ -496,6 +621,85 @@
                 lucide.createIcons();
             }
         }
+        
+        // --- LOGIKA EDIT MODAL ---
+
+        // Mengisi modal dengan data paper yang dipilih
+        function openEditModal(paper) {
+            document.getElementById('edit-id').value = paper.id;
+            document.getElementById('edit-title-display').textContent = paper.title; // Judul hanya display
+            
+            // Kolom yang dapat diubah
+            document.getElementById('edit-authors').value = paper.authors || '';
+            document.getElementById('edit-status').value = paper.status;
+            document.getElementById('edit-category').value = paper.category || '';
+            
+            // Format deadline untuk input type="date" (YYYY-MM-DD)
+            document.getElementById('edit-deadline').value = paper.deadline ? paper.deadline.split('T')[0] : '';
+
+            // Link
+            document.getElementById('edit-reference_link').value = paper.reference_link || '';
+            document.getElementById('edit-overleaf_link').value = paper.overleaf_link || '';
+            document.getElementById('edit-ppt_link').value = paper.ppt_link || '';
+
+            editFormMessage.classList.add('hidden');
+            editModal.classList.remove('hidden');
+            lucide.createIcons(); // Re-render icons in modal
+        }
+
+        function closeEditModal() {
+            editModal.classList.add('hidden');
+        }
+
+        // Fungsi untuk menyimpan hasil edit
+        editPaperForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const paperId = document.getElementById('edit-id').value;
+            const updatedPaper = {
+                authors: document.getElementById('edit-authors').value.trim() || null,
+                status: document.getElementById('edit-status').value,
+                category: document.getElementById('edit-category').value.trim() || null,
+                deadline: document.getElementById('edit-deadline').value || null,
+                reference_link: document.getElementById('edit-reference_link').value.trim() || null,
+                overleaf_link: document.getElementById('edit-overleaf_link').value.trim() || null,
+                ppt_link: document.getElementById('edit-ppt_link').value.trim() || null,
+            };
+
+            // Perubahan UI saat menyimpan
+            saveEditButton.disabled = true;
+            saveEditButton.innerHTML = renderSaveButton('Menyimpan...', 'loader-circle');
+            lucide.createIcons();
+
+            try {
+                // Supabase UPDATE operation
+                const { error } = await supabaseClient
+                    .from(TABLE_NAME)
+                    .update(updatedPaper)
+                    .eq('id', paperId);
+
+                if (error) throw error;
+
+                showEditMessage('Perubahan berhasil disimpan!', 'text-green-500');
+                
+                // Refresh data di latar belakang
+                fetchPapers(searchInput.value); 
+                
+                // Tutup modal setelah jeda singkat
+                setTimeout(closeEditModal, 1000);
+
+            } catch (error) {
+                console.error('Error updating paper:', error.message);
+                let errorMessage = error.message.includes('permission denied')
+                    ? `Gagal menyimpan: Akses Ditolak (RLS Error). Cek kebijakan UPDATE di Supabase.`
+                    : `Gagal menyimpan: ${error.message}`;
+                showEditMessage(errorMessage, 'text-red-500');
+            } finally {
+                saveEditButton.disabled = false;
+                saveEditButton.innerHTML = renderSaveButton('Simpan Perubahan', 'check');
+                lucide.createIcons();
+            }
+        });
 
         function showMessage(message, colorClass) {
             formMessage.textContent = message;
@@ -504,6 +708,15 @@
             setTimeout(() => {
                 formMessage.classList.add('hidden');
             }, 4000);
+        }
+
+        function showEditMessage(message, colorClass) {
+            editFormMessage.textContent = message;
+            editFormMessage.className = `col-span-3 text-sm text-center font-semibold ${colorClass}`;
+            editFormMessage.classList.remove('hidden');
+            setTimeout(() => {
+                editFormMessage.classList.add('hidden');
+            }, 3000);
         }
 
         // --- EVENT LISTENERS ---
@@ -521,10 +734,11 @@
         // --- INISIALISASI ---
 
         document.addEventListener('DOMContentLoaded', () => {
-            // FIX 1: Set status awal tombol submit
+            // Set status awal tombol submit
             submitButton.innerHTML = renderSubmitButton('Tambah Paper', 'file-plus');
             
             checkSession();
+            // Inisialisasi awal untuk semua ikon statis
             lucide.createIcons(); 
         });
 
