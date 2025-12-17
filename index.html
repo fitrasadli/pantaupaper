@@ -145,14 +145,13 @@
         }
 
         /* Gaya untuk badge CV */
-        /* Memperbaiki ukuran ikon CV agar lebih besar dan lebih jelas */
         .cv-link-cell {
             @apply flex items-center justify-center space-x-1;
             padding-top: 0.5rem;
             padding-bottom: 0.5rem;
         }
         .cv-link-cell a {
-            @apply p-1.5 rounded-full text-base; /* Ukuran lebih besar */
+            @apply p-1.5 rounded-full text-base; 
             transition: background-color 0.2s;
         }
         .cv-link-cell .cv-available {
@@ -279,7 +278,6 @@
                 
                 <!-- VIEW 1: MANAJEMEN PAPER (EXISTING) -->
                 <div id="paperView" class="view-content hidden space-y-4">
-                    <!-- ... Konten Paper ... (Dibiarkan sama) -->
                     <div class="main-page-header">
                         <h1 class="text-3xl font-bold text-gray-800 flex items-center p-0">
                             <i data-lucide="file-text" class="w-8 h-8 mr-3 text-yellow-600"></i>
@@ -422,7 +420,7 @@
                             <h2 class="text-2xl font-semibold text-yellow-700 mb-4 flex items-center space-x-2">
                                 <i data-lucide="list" class="w-6 h-6"></i>
                                 <span>Daftar Materi</span>
-                            </h2
+                            </h2>
                                <!-- Input Pencarian Materi -->
                             <input type="text" id="searchMateri" placeholder="Cari berdasarkan Judul atau Pembuat..."
                                 class="w-full p-3 mb-6 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500">
@@ -935,6 +933,31 @@
         
         let currentActiveView = 'paper'; // Default view saat login
 
+        // --- ROLE PERMISSIONS (BARU) ---
+        function applyPermissions() {
+            const role = sessionStorage.getItem('userRole') || 'viewer';
+            
+            // Mencari container form (div dengan bg-white)
+            const paperContainer = paperForm ? paperForm.parentElement : null;
+            const materiContainer = materiForm ? materiForm.parentElement : null;
+            const anggotaContainer = anggotaForm ? anggotaForm.parentElement : null;
+            const alumniContainer = alumniForm ? alumniForm.parentElement : null;
+
+            const containers = [paperContainer, materiContainer, anggotaContainer, alumniContainer];
+
+            if (role !== 'admin') {
+                // Sembunyikan form tambah data jika bukan admin
+                containers.forEach(c => {
+                    if (c) c.classList.add('hidden');
+                });
+            } else {
+                // Tampilkan jika dia admin
+                containers.forEach(c => {
+                    if (c) c.classList.remove('hidden');
+                });
+            }
+        }
+
         // --- LOGIKA UTILITY ---
         function renderButtonContent(text, icon = 'file-plus') {
             const spinClass = icon === 'loader-circle' ? 'animate-spin-fast' : '';
@@ -1076,6 +1099,7 @@
         function showApp() {
             if (loginSection) loginSection.classList.add('hidden');
             if (appSection) appSection.classList.remove('hidden');
+            applyPermissions(); // TERAPKAN IZIN AKSES SAAT APP DIBUKA
         }
 
         loginForm && loginForm.addEventListener('submit', async (e) => {
@@ -1101,6 +1125,7 @@
 
                 if (data) {
                     sessionStorage.setItem('isLoggedIn', 'true');
+                    sessionStorage.setItem('userRole', data.role || 'viewer'); // SIMPAN ROLE DI SINI
                     showApp();
                     showView(currentActiveView);
                 } else {
@@ -1130,10 +1155,11 @@
 
         logoutButton && logoutButton.addEventListener('click', () => {
             sessionStorage.removeItem('isLoggedIn');
+            sessionStorage.removeItem('userRole');
             window.location.reload(); 
         });
 
-        // --- LOGIKA UTAMA (PAPER & MATERI - HANYA DIBERSIHKAN) ---
+        // --- LOGIKA UTAMA (PAPER & MATERI) ---
 
         // Paper
         function getStatusBadge(status) {
@@ -1153,6 +1179,7 @@
         function createPaperRow(paper) {
             const deadlineDate = paper.deadline ? new Date(paper.deadline).toLocaleDateString('id-ID', { year: 'numeric', month: 'short', day: 'numeric' }) : '-';
             const paperJson = JSON.stringify(paper).replace(/'/g, "\\'");
+            const role = sessionStorage.getItem('userRole');
 
             const linkIcon = (url, iconName, label) => {
                 if (!url) return '';
@@ -1172,6 +1199,15 @@
                 ${linkIcon(paper.ppt_link, 'monitor', 'Link PPT')}
             `;
 
+            // Tombol edit hanya untuk admin
+            const editButton = (role === 'admin') ? `
+                <button onclick='openEditModal("paper", ${paperJson})'
+                    class="p-1 rounded-full border border-blue-200 bg-blue-50 text-blue-600 hover:bg-blue-200 hover:border-blue-400 transition duration-200 shadow-sm" 
+                    title="Edit Paper">
+                    <i data-lucide="edit-3" class="w-4 h-4"></i>
+                </button>
+            ` : '';
+
             return `
                 <tr class="hover:bg-yellow-50 transition duration-150">
                     <td class="px-3 py-4 whitespace-normal text-sm font-medium text-gray-900">${paper.title}</td>
@@ -1181,11 +1217,7 @@
                     <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500 hidden sm:table-cell">${deadlineDate}</td>
                     <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-700 flex space-x-1 items-center">
                         ${links}
-                        <button onclick='openEditModal("paper", ${paperJson})'
-                            class="p-1 rounded-full border border-blue-200 bg-blue-50 text-blue-600 hover:bg-blue-200 hover:border-blue-400 transition duration-200 shadow-sm" 
-                            title="Edit Paper">
-                            <i data-lucide="edit-3" class="w-4 h-4"></i>
-                        </button>
+                        ${editButton}
                     </td>
                 </tr>
             `;
@@ -1220,7 +1252,7 @@
                 papersList.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-red-500 font-bold">${errorMessage}</td></tr>`;
             }
         }
-        paperForm && paperForm.addEventListener('submit', async (event) => { /* ... (logic for paperForm unchanged) ... */
+        paperForm && paperForm.addEventListener('submit', async (event) => { 
             event.preventDefault();
             const newPaper = {
                 title: document.getElementById('title').value.trim(),
@@ -1258,7 +1290,7 @@
                 lucide.createIcons();
             }
         });
-        editPaperForm && editPaperForm.addEventListener('submit', async (e) => { /* ... (logic for editPaperForm unchanged) ... */
+        editPaperForm && editPaperForm.addEventListener('submit', async (e) => { 
              e.preventDefault();
             const paperId = document.getElementById('edit-id-paper').value;
             const updatedPaper = {
@@ -1296,7 +1328,8 @@
         function createMateriRow(materi) {
             const tanggalJadi = materi.tanggal_jadi ? new Date(materi.tanggal_jadi).toLocaleDateString('id-ID', { year: 'numeric', month: 'short', day: 'numeric' }) : '-';
             const materiJson = JSON.stringify(materi).replace(/'/g, "\\'");
-            
+            const role = sessionStorage.getItem('userRole');
+
             const badgeColor = materi.divisi === '5G' ? 'bg-indigo-100 text-indigo-800' : 
                                 materi.divisi === 'IoT' ? 'bg-cyan-100 text-cyan-800' : 'bg-gray-100 text-gray-800';
 
@@ -1317,6 +1350,14 @@
                 ${linkIcon(materi.ppt_link_materi, 'monitor', 'Link PPT/Slide')}
             `;
 
+            const editButton = (role === 'admin') ? `
+                <button onclick='openEditModal("materi", ${materiJson})'
+                    class="p-1 rounded-full border border-blue-200 bg-blue-50 text-blue-600 hover:bg-blue-200 hover:border-blue-400 transition duration-200 shadow-sm" 
+                    title="Edit Materi">
+                    <i data-lucide="edit-3" class="w-4 h-4"></i>
+                </button>
+            ` : '';
+
             return `
                 <tr class="hover:bg-yellow-50 transition duration-150">
                     <td class="px-3 py-4 whitespace-normal text-sm font-medium text-gray-900">${materi.judul_materi}</td>
@@ -1329,11 +1370,7 @@
                     <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500 hidden sm:table-cell">${tanggalJadi}</td>
                     <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-700 flex space-x-1 items-center">
                         ${links}
-                        <button onclick='openEditModal("materi", ${materiJson})'
-                            class="p-1 rounded-full border border-blue-200 bg-blue-50 text-blue-600 hover:bg-blue-200 hover:border-blue-400 transition duration-200 shadow-sm" 
-                            title="Edit Materi">
-                            <i data-lucide="edit-3" class="w-4 h-4"></i>
-                        </button>
+                        ${editButton}
                     </td>
                 </tr>
             `;
@@ -1368,7 +1405,7 @@
                 materiList.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-red-500 font-bold">${errorMessage}</td></tr>`;
             }
         }
-        materiForm && materiForm.addEventListener('submit', async (event) => { /* ... (logic for materiForm unchanged) ... */
+        materiForm && materiForm.addEventListener('submit', async (event) => { 
              event.preventDefault();
             const newMateri = {
                 divisi: document.getElementById('divisi').value,
@@ -1404,7 +1441,7 @@
                 lucide.createIcons();
             }
         });
-        editMateriForm && editMateriForm.addEventListener('submit', async (e) => { /* ... (logic for editMateriForm unchanged) ... */
+        editMateriForm && editMateriForm.addEventListener('submit', async (e) => { 
             e.preventDefault();
             const materiId = document.getElementById('edit-id-materi').value;
             const updatedMateri = {
@@ -1448,11 +1485,20 @@
             const anggotaJson = JSON.stringify(anggota).replace(/'/g, "\\'");
             const tglLahir = anggota.tanggal_lahir ? new Date(anggota.tanggal_lahir).toLocaleDateString('id-ID', { year: 'numeric', month: 'short', day: 'numeric' }) : '-';
             const orgLain = anggota.organisasi_lain || '-';
+            const role = sessionStorage.getItem('userRole');
 
             // PERBAIKAN IKON CV
             const cvLink = anggota.link_cv ? 
                 `<a href="${anggota.link_cv}" target="_blank" class="cv-link-cell cv-available" title="Lihat CV"><i data-lucide="file-text" class="w-4 h-4"></i></a>` :
                 `<span class="cv-link-cell cv-missing" title="CV Tidak Ada"><i data-lucide="file-x" class="w-4 h-4"></i></span>`;
+
+            const editButton = (role === 'admin') ? `
+                <button onclick='openEditModal("anggota", ${anggotaJson})'
+                    class="p-1 rounded-full border border-blue-200 bg-blue-50 text-blue-600 hover:bg-blue-200 hover:border-blue-400 transition duration-200 shadow-sm" 
+                    title="Edit Anggota">
+                    <i data-lucide="edit-3" class="w-4 h-4"></i>
+                </button>
+            ` : '';
 
             // Mengubah tampilan kolom Kontak & CV
             return `
@@ -1470,11 +1516,7 @@
                     <td class="px-3 py-4 whitespace-normal text-xs text-gray-500">${orgLain}</td>
                     <td class="px-3 py-4 whitespace-nowrap text-sm">${cvLink}</td>
                     <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-700">
-                        <button onclick='openEditModal("anggota", ${anggotaJson})'
-                            class="p-1 rounded-full border border-blue-200 bg-blue-50 text-blue-600 hover:bg-blue-200 hover:border-blue-400 transition duration-200 shadow-sm" 
-                            title="Edit Anggota">
-                            <i data-lucide="edit-3" class="w-4 h-4"></i>
-                        </button>
+                        ${editButton}
                     </td>
                 </tr>
             `;
@@ -1593,11 +1635,20 @@
 
         function createAlumniRow(alumni) {
             const alumniJson = JSON.stringify(alumni).replace(/'/g, "\\'");
+            const role = sessionStorage.getItem('userRole');
             
             // PERBAIKAN IKON CV
             const cvLink = alumni.link_cv ? 
                 `<a href="${alumni.link_cv}" target="_blank" class="cv-link-cell cv-available" title="Lihat CV"><i data-lucide="file-text" class="w-4 h-4"></i></a>` :
                 `<span class="cv-link-cell cv-missing" title="CV Tidak Ada"><i data-lucide="file-x" class="w-4 h-4"></i></span>`;
+
+            const editButton = (role === 'admin') ? `
+                <button onclick='openEditModal("alumni", ${alumniJson})'
+                    class="p-1 rounded-full border border-blue-200 bg-blue-50 text-blue-600 hover:bg-blue-200 hover:border-blue-400 transition duration-200 shadow-sm" 
+                    title="Edit Alumni">
+                    <i data-lucide="edit-3" class="w-4 h-4"></i>
+                </button>
+            ` : '';
 
             // Mengubah tampilan kolom Kontak & CV
             return `
@@ -1613,11 +1664,7 @@
                     <td class="px-3 py-4 whitespace-nowrap text-xs text-gray-700">${alumni.no_handphone || '-'}</td>
                     <td class="px-3 py-4 whitespace-nowrap text-sm">${cvLink}</td>
                     <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-700">
-                        <button onclick='openEditModal("alumni", ${alumniJson})'
-                            class="p-1 rounded-full border border-blue-200 bg-blue-50 text-blue-600 hover:bg-blue-200 hover:border-blue-400 transition duration-200 shadow-sm" 
-                            title="Edit Alumni">
-                            <i data-lucide="edit-3" class="w-4 h-4"></i>
-                        </button>
+                        ${editButton}
                     </td>
                 </tr>
             `;
